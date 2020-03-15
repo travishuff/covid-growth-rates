@@ -58,6 +58,11 @@ function App() {
         <p>
           California Virus Growth Rates
         </p>
+        <p>
+          Data from Johns Hopkins CSSE repository
+          <br />
+          <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>
+        </p>
       </header>
       <div>
         { loading &&
