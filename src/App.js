@@ -55,7 +55,7 @@ function App() {
     <div className="App">
 
       <header className="App-header">
-        <p>
+        <p className="title">
           California Virus Growth Rates
         </p>
         <p>
@@ -76,7 +76,7 @@ function App() {
             <tr className="table-heading">
               <td className="date">Date</td>
               <td className="cases"># cases</td>
-              <td className="growth">DoD growth</td>
+              <td className="growth">Day over day growth rate</td>
             </tr>
             { caliDates }
           </tbody>

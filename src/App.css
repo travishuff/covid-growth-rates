@@ -6,6 +6,18 @@
   height: 100vh;
 }
 
+.title {
+  font-size: 2rem;
+}
+
+a {
+  color: white;
+}
+
+a:visited {
+  color: white;
+}
+
 .App-header {
   display: flex;
   flex-direction: column;
@@ -14,7 +26,7 @@
 }
 
 .table-heading {
-  color: green;
+  color: lightgreen;
 }
 
 .date {
