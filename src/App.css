@@ -3,7 +3,8 @@
   text-align: left;
   font-size: 1rem;
   color: white;
-  height: 100vh;
+  min-height: 100vh;
+  padding: 10px;
 }
 
 .title {
@@ -43,4 +44,10 @@ a:visited {
 
 .App-link {
   color: #61dafb;
+}
+
+.credits {
+  margin-top: 5vh;
+  font-size: .8rem;
+  color: lightgreen;
 }
