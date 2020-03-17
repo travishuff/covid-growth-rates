@@ -16,7 +16,7 @@ function App() {
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
       <td className="date">Date</td>
-      <td className="cases"># new cases</td>
+      <td className="cases"># cases</td>
       <td className="growth">Day over day growth rate</td>
     </tr>
   ), []);
