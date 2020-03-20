@@ -1,68 +1,34 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useFetchVirusStats } from './useFetchVirusStats'
-import DataRows from './DataRows'
+import StatTable from './StatTable'
 
 import './App.css';
 
 
 function App() {
   const {
-    caliStats,
-    usStats,
-    loading,
     error,
+    loading,
+    stats,
   } = useFetchVirusStats();
-
-  const tableHeading = useMemo(() => (
-    <tr className="table-heading">
-      <td className="date">Date</td>
-      <td className="cases"># cases</td>
-      <td className="growth">Day over day growth rate</td>
-    </tr>
-  ), []);
 
   return (
     <div className="App">
-
-      <header className="App-header">
-        <p className="title">
-          California Virus Growth Rates
-        </p>
-      </header>
-      <div>
-        { loading &&
-        <div>Loading data...</div> }
-
-        { error &&
-        <div>Error occured getting data.</div> }
-
-        <table>
-          <tbody>
-            { tableHeading }
-            <DataRows data={ caliStats } />
-          </tbody>
-        </table>
+      <div className="app-title">
+        COVID-19 Growth Tracker
       </div>
 
-      <header className="App-header">
-        <p className="title">
-          United States Virus Growth Rates
-        </p>
-      </header>
-      <div>
-        { loading &&
-        <div>Loading data...</div> }
-
-        { error &&
-        <div>Error occured getting data.</div> }
-
-        <table>
-          <tbody>
-            { tableHeading }
-            <DataRows data={ usStats } />
-          </tbody>
-        </table>
-      </div>
+      { Object.entries(stats).map(([location, stats]) => {
+        return (
+          <StatTable
+            error={ error }
+            loading={ loading }
+            location={ location }
+            key={ location }
+            stats={ stats }
+          />
+        );
+      }) }
 
       <p className="credits">
         Data from Johns Hopkins CSSE repository

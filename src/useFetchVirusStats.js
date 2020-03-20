@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { getCali, getUS } from './dataUtils'
+import { getCali, getNewYork, getUS } from './dataUtils'
 
 export function useFetchVirusStats() {
   const [caliStats, setCaliStats] = useState();
+  const [newYorkStats, setNewYorkStats] = useState();
   const [usStats, setUSStats] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     (async function fetchData() {
-      console.log('Fetching Data...');
       setLoading(true);
       setError(false);
 
@@ -18,21 +18,25 @@ export function useFetchVirusStats() {
         .then(json => {
           setLoading(false);
           const caliData = getCali(json);
+          const newYorkData = getNewYork(json);
           const usData = getUS(json);
           setCaliStats(caliData);
+          setNewYorkStats(newYorkData);
           setUSStats(usData);
         })
         .catch(err => {
           setError(true);
-          console.error('error:', err.message);
           setLoading(false);
         });
     })();
   }, []);
 
   return {
-    caliStats,
-    usStats,
+    stats: {
+      'California': caliStats,
+      'New York': newYorkStats,
+      'United States': usStats,
+    },
     loading,
     error,
   }
