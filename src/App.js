@@ -18,16 +18,18 @@ function App() {
         COVID-19 Growth Tracker
       </div>
 
-      { Object.entries(stats).map(([location, stats]) => {
-        return (
-          <StatTable
-            error={ error }
-            loading={ loading }
-            location={ location }
-            key={ location }
-            stats={ stats }
-          />
-        );
+      { stats.map(entity => {
+          return entity.map(([location, stats]) => {
+            return (
+              <StatTable
+                error={ error }
+                loading={ loading }
+                location={ location }
+                key={ location }
+                stats={ stats }
+              />
+            );
+          })
       }) }
 
       <p className="credits">

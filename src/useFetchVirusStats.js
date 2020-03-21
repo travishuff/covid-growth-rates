@@ -1,10 +1,22 @@
 import { useEffect, useState } from 'react';
-import { getCali, getNewYork, getUS } from './dataUtils'
+import { getState, getCountry } from './dataUtils'
+
+const states = [
+  'California',
+  'New York',
+  'Texas',
+  'Illinois',
+];
+
+const countries = {
+  'US': 'United States',
+  'CN': 'China',
+  'IT': 'Italy',
+};
 
 export function useFetchVirusStats() {
-  const [caliStats, setCaliStats] = useState();
-  const [newYorkStats, setNewYorkStats] = useState();
-  const [usStats, setUSStats] = useState();
+  const [stateStats, setStateStats] = useState([]);
+  const [countryStats, setCountryStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -17,12 +29,14 @@ export function useFetchVirusStats() {
         .then(res => res.json())
         .then(json => {
           setLoading(false);
-          const caliData = getCali(json);
-          const newYorkData = getNewYork(json);
-          const usData = getUS(json);
-          setCaliStats(caliData);
-          setNewYorkStats(newYorkData);
-          setUSStats(usData);
+          const countriesMapped = Object.keys(countries).map(country => {
+            return [countries[country], getCountry(country, json)];
+          });
+          const statesMapped = states.map(state => {
+            return [state, getState(state, json)];
+          });
+          setCountryStats(countriesMapped);
+          setStateStats(statesMapped);
         })
         .catch(err => {
           setError(true);
@@ -32,11 +46,10 @@ export function useFetchVirusStats() {
   }, []);
 
   return {
-    stats: {
-      'California': caliStats,
-      'New York': newYorkStats,
-      'United States': usStats,
-    },
+    stats: [
+      stateStats,
+      countryStats,
+    ],
     loading,
     error,
   }
