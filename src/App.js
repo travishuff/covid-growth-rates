@@ -38,6 +38,12 @@ function App() {
         <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>
       </p>
 
+      <p className="credits">
+        Source code for this repository
+        <br />
+        <a href="https://github.com/travishuff/covid-growth-rates">https://github.com/travishuff/covid-growth-rates</a>
+      </p>
+
     </div>
   );
 }

@@ -1,9 +1,8 @@
-const TARGET_DATE = new Date('3/9/20');
+const TARGET_DATE = new Date('1/1/20');
 
 function transformData(totals) {
   let prev = 0;
   return Object.entries(totals)
-  .map(([date, number]) => [date, number])
   .sort((a, b) => {
     return new Date(a[0]) - new Date(b[0]);
   })
