@@ -2,8 +2,6 @@ import React, { Fragment, useMemo, useState } from 'react';
 import DataRows from './DataRows'
 
 function StatTable({
-  error,
-  loading,
   location,
   stats,
 }) {
@@ -25,12 +23,6 @@ function StatTable({
         </div>
       </header>
       <div>
-        { loading &&
-        <div>Loading data...</div> }
-
-        { error &&
-        <div>Error occured getting data.</div> }
-
         <table>
           <tbody>
             <tr

@@ -18,12 +18,16 @@ function App() {
         COVID-19 Growth Tracker
       </div>
 
+      { loading &&
+        <div>Loading data...</div> }
+
+      { error &&
+      <div>Error occured getting data.</div> }
+
       { stats.map(entity => {
           return entity.map(([location, stats]) => {
             return (
               <StatTable
-                error={ error }
-                loading={ loading }
                 location={ location }
                 key={ location }
                 stats={ stats }
