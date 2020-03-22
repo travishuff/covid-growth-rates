@@ -10,13 +10,15 @@ function transformData(totals) {
     const itemDate = new Date(item[0]);
     return itemDate > TARGET_DATE;
   })
-  .map(([date, number]) => {
-    const growth = prev !== 0 ? `${Math.round((number/prev - 1) * 100)}%` : 'n/a';
-    prev = number;
+  .map(([date, totalCases]) => {
+    const growth = prev !== 0 ? `${Math.round((totalCases/prev - 1) * 100)}%` : 'n/a';
+    const newCases = totalCases - prev;
+    prev = totalCases;
 
     return [
       date,
-      number,
+      totalCases,
+      newCases,
       growth,
     ];
   });

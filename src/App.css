@@ -25,20 +25,29 @@ a:visited {
   color: white;
 }
 
+table {
+  width: 100%;
+}
+
+td {
+  width: 25%;
+}
+
 .table-heading {
   color: lightgreen;
 }
 
 .date {
-  width: 100px;
+  width: 25%;
 }
 
 .cases {
-  width: 100px;
+  width: 20%;
 }
 
 .growth {
   width: 100px;
+  font-weight: bold;
 }
 
 .App-link {
