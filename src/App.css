@@ -9,12 +9,13 @@
 
 .app-title {
   font-size: 1.5rem;
-  text-align: center;
+  text-align: left;
 }
 
 .title {
   font-size: 1.5rem;
   margin-top: 1.5rem;
+  cursor: pointer;
 }
 
 a {
@@ -25,28 +26,35 @@ a:visited {
   color: white;
 }
 
-table {
-  width: 100%;
-}
-
-td {
-  width: 25%;
-}
-
 .table-heading {
   color: lightgreen;
 }
 
-.date {
-  width: 25%;
+table {
+  width: 40%;
 }
 
-.cases {
-  width: 20%;
+@media
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+  .app-title {
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .date {
+    width: 25%;
+  }
+
+  .cases {
+    width: 20%;
+  }
 }
 
 .growth {
-  width: 100px;
   font-weight: bold;
 }
 
