@@ -1,16 +1,10 @@
 import React from 'react';
-import { useFetchVirusStats } from './useFetchVirusStats'
+import { useFetchVirusStats } from '../hooks/useFetchVirusStats'
 import StatTable from './StatTable'
-
-import './App.css';
-
+import '../App.css';
 
 function App() {
-  const {
-    error,
-    loading,
-    stats,
-  } = useFetchVirusStats();
+  const { error, loading, stats } = useFetchVirusStats();
 
   return (
     <div className="App">

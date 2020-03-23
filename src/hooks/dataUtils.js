@@ -2,7 +2,9 @@ const TARGET_DATE = new Date('1/1/20');
 
 function transformData(totals) {
   let prev = 0;
-  return Object.entries(totals)
+  const growthNumbers = [];
+
+  const dataArr = Object.entries(totals)
   .sort((a, b) => {
     return new Date(a[0]) - new Date(b[0]);
   })
@@ -11,7 +13,9 @@ function transformData(totals) {
     return itemDate > TARGET_DATE;
   })
   .map(([date, totalCases]) => {
-    const growth = prev !== 0 ? `${Math.round((totalCases/prev - 1) * 100)}%` : 'n/a';
+    const growthNum = prev !== 0 ? Math.round((totalCases/prev - 1) * 100) : 0;
+    growthNumbers.push(growthNum);
+    const growth = prev !== 0 ? `${growthNum}%` : 'n/a';
     const newCases = totalCases - prev;
     prev = totalCases;
 
@@ -21,6 +25,26 @@ function transformData(totals) {
       newCases,
       growth,
     ];
+  });
+
+  const threeDay = [];
+  const rollingAverageArray = growthNumbers.map(item => {
+    threeDay.push(item);
+    if (threeDay.length > 3) threeDay.shift();
+
+    return threeDay.length === 3
+    ? `${Math.round((threeDay.reduce((all, item) => all += item)) / 3)}%`
+    : 'n/a';
+  });
+
+  return dataArr.map(([date, totalCases, newCases, growth]) => {
+    return [
+      date,
+      totalCases,
+      newCases,
+      growth,
+      rollingAverageArray.shift(),
+    ]
   });
 }
 

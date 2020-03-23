@@ -31,7 +31,15 @@ a:visited {
 }
 
 table {
-  width: 40%;
+  width: 50%;
+}
+
+.date {
+  width: 23%;
+}
+
+.cases {
+  width: 17%;
 }
 
 @media
@@ -43,14 +51,15 @@ only screen and (max-width: 760px),
 
   table {
     width: 100%;
+    font-size: .8rem;
   }
 
   .date {
-    width: 25%;
+    width: 23%;
   }
 
   .cases {
-    width: 20%;
+    width: 17%;
   }
 }
 

@@ -7,10 +7,7 @@ const initialLocations = [
   'United States'
 ];
 
-function StatTable({
-  location,
-  stats,
-}) {
+function StatTable({ location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(false)
 
@@ -19,7 +16,8 @@ function StatTable({
       <td className="date">Date</td>
       <td className="cases">Total<br />cases</td>
       <td className="cases">New<br />cases</td>
-      <td className="growth">Day over day<br />growth rate</td>
+      <td className="growth">Day-over<br />day</td>
+      <td className="growth">Rolling<br />3-day</td>
     </tr>
   ), []);
 
@@ -27,7 +25,7 @@ function StatTable({
     if (initialLocations.includes(location)) {
       setShowLocation(true);
     }
-  }, []);
+  }, [location]);
 
   return (
     <Fragment>
