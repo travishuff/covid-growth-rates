@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getState, getCountry } from './dataUtils'
 
 const states = [
-  // 'Los Angeles, CA',
   'California',
   'New York',
   'Texas',
@@ -13,6 +12,7 @@ const countries = {
   'US': 'United States',
   'CN': 'China',
   'IT': 'Italy',
+  'KR': 'South Korea',
 };
 
 export function useFetchVirusStats() {
