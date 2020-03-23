@@ -17,9 +17,9 @@ function StatTable({ location, stats }) {
       <td className="cases">Total<br />cases</td>
       <td className="cases">New<br />cases</td>
       <td className="growth">Day-over<br />day</td>
-      <td className="growth">Rolling<br />3-day</td>
+      { showOlderData && <td className="growth">Rolling<br />3-day</td> }
     </tr>
-  ), []);
+  ), [showOlderData]);
 
   useEffect(() => {
     if (initialLocations.includes(location)) {
@@ -42,7 +42,7 @@ function StatTable({ location, stats }) {
                 className="older-toggle"
                 onClick={ () => setShowOlderData(!showOlderData) }
                 >
-                <td colSpan="3">show/hide older data</td>
+                <td colSpan="3">show/hide more data</td>
               </tr>
               { tableHeading }
               { stats &&
