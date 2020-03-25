@@ -9,10 +9,10 @@ const states = [
 ];
 
 const countries = {
-  'US': 'United States',
-  'CN': 'China',
-  'IT': 'Italy',
-  'KR': 'South Korea',
+  'usa': 'United States',
+  'china': 'China',
+  'italy': 'Italy',
+  's.%20korea': 'South Korea',
 };
 
 export function useFetchVirusStats() {
@@ -26,23 +26,29 @@ export function useFetchVirusStats() {
       setLoading(true);
       setError(false);
 
-      fetch('https://coronavirus-tracker-api.herokuapp.com/confirmed')
+      const countryFetches = await Promise.all(Object.keys(countries).map(country => {
+        return fetch(`https://corona.lmao.ninja/v2/historical/${country}`)
         .then(res => res.json())
         .then(json => {
-          setLoading(false);
-          const countriesMapped = Object.keys(countries).map(country => {
-            return [countries[country], getCountry(country, json)];
-          });
-          const statesMapped = states.map(state => {
-            return [state, getState(state, json)];
-          });
-          setCountryStats(countriesMapped);
-          setStateStats(statesMapped);
+          return [countries[country], getCountry(json)];
         })
         .catch(err => {
           setError(true);
           setLoading(false);
         });
+      }));
+
+      // const stateFetchesRes = await fetch('https://covid2019-api.herokuapp.com/timeseries/confirmed');
+      // const stateFetchesJson = await stateFetchesRes.json();
+      // const stateFetches =  states.map(state => {
+      //   return [state, getState(state, stateFetchesJson)];
+      // });
+
+      if (countryFetches) {
+        setLoading(false);
+        setCountryStats(countryFetches);
+        // setStateStats(stateFetches);
+      }
     })();
   }, []);
 
