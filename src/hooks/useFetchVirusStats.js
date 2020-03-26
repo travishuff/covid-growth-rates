@@ -38,22 +38,23 @@ export function useFetchVirusStats() {
         });
       }));
 
-      const stateFetches = await Promise.all(Object.keys(states).map(state => {
-        return fetch(`https://covidtracking.com/api/states/daily?state=${state}`)
-        .then(res => res.json())
-        .then(json => {
-          return [states[state], getState(json)];
-        })
-        .catch(err => {
-          setError(true);
-          setLoading(false);
-        });
-      }));
+      // const stateFetches = await Promise.all(Object.keys(states).map(state => {
+      //   return fetch(`https://covidtracking.com/api/states/daily?state=${state}`)
+      //   .then(res => res.json())
+      //   .then(json => {
+      //     return [states[state], getState(json)];
+      //   })
+      //   .catch(err => {
+      //     setError(true);
+      //     setLoading(false);
+      //   });
+      // }));
 
-      if (countryFetches && stateFetches) {
+      // if (countryFetches && stateFetches) {
+      if (countryFetches) {
         setLoading(false);
         setCountryStats(countryFetches);
-        setStateStats(stateFetches);
+        // setStateStats(stateFetches);
       }
     })();
   }, []);
