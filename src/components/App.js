@@ -31,9 +31,15 @@ function App() {
       }) }
 
       <p className="credits">
-        Data from Johns Hopkins CSSE repository
+        Country-level data source from Johns Hopkins CSSE repository:
         <br />
-        <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>
+        <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a>
+      </p>
+
+      <p className="credits">
+        State-level data source:
+        <br />
+        <a href="https://covidtracking.com/about-tracker/">https://covidtracking.com/about-tracker/</a>
       </p>
 
       <p className="credits">

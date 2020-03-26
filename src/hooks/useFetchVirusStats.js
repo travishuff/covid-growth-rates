@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getState, getCountry } from './dataUtils'
 
-const states = [
-  'California',
-  'New York',
-  'Texas',
-  'Illinois',
-];
+const states = {
+  CA: 'California',
+  NY: 'New York',
+  TX: 'Texas',
+  IL: 'Illinois',
+};
 
 const countries = {
   'usa': 'United States',
@@ -38,16 +38,22 @@ export function useFetchVirusStats() {
         });
       }));
 
-      // const stateFetchesRes = await fetch('https://covid2019-api.herokuapp.com/timeseries/confirmed');
-      // const stateFetchesJson = await stateFetchesRes.json();
-      // const stateFetches =  states.map(state => {
-      //   return [state, getState(state, stateFetchesJson)];
-      // });
+      const stateFetches = await Promise.all(Object.keys(states).map(state => {
+        return fetch(`https://covidtracking.com/api/states/daily?state=${state}`)
+        .then(res => res.json())
+        .then(json => {
+          return [states[state], getState(json)];
+        })
+        .catch(err => {
+          setError(true);
+          setLoading(false);
+        });
+      }));
 
-      if (countryFetches) {
+      if (countryFetches && stateFetches) {
         setLoading(false);
         setCountryStats(countryFetches);
-        // setStateStats(stateFetches);
+        setStateStats(stateFetches);
       }
     })();
   }, []);

@@ -3,9 +3,6 @@ function transformData(timelineData) {
   const growthNumbers = [];
 
   const dataArr = Object.entries(timelineData)
-  // .sort((a, b) => {
-  //   return new Date(a[0]) - new Date(b[0]);
-  // })
   .map(([date, totalCases]) => {
     const growthNum = prev !== 0 ? Math.round((totalCases/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
@@ -43,14 +40,11 @@ function transformData(timelineData) {
 }
 
 
-export function getState(state, json) {
-  const stateData = json.confirmed
-  .filter(item => item['Province/State'] === state)[0];
-  delete stateData['Province/State'];
-  delete stateData['Country/Region'];
-  delete stateData['Lat'];
-  delete stateData['Long'];
-  console.log(stateData);
+export function getState(json) {
+  const stateData = json.reduce((all, item) => {
+    all[item.date] = item.positive;
+    return all;
+  }, {});
 
   return transformData(stateData);
 }
