@@ -46,7 +46,17 @@ export function getState(json) {
     return all;
   }, {});
 
-  return transformData(stateData);
+  const stateDataModifiedDate = Object.entries(stateData).reduce((all, [date, numCases]) => {
+    const newDate = date.toString();
+    const year = newDate.slice(0, 2);
+    const month = newDate.slice(4, 6);
+    const day = newDate.slice(6);
+    const formattedDate = `${month}/${day}/${year}`
+    all[formattedDate] = numCases;
+    return all;
+  }, {});
+
+  return transformData(stateDataModifiedDate);
 }
 
 

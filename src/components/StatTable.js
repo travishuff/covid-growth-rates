@@ -3,7 +3,6 @@ import DataRows from './DataRows'
 
 const initialLocations = [
   'California',
-  'New York',
   'United States'
 ];
 
