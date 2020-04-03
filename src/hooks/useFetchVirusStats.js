@@ -7,6 +7,7 @@ const states = {
   LA: 'Louisiana',
   TX: 'Texas',
   IL: 'Illinois',
+  MI: 'Michigan',
 };
 
 const countries = {

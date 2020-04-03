@@ -6,9 +6,16 @@ const initialLocations = [
   'United States'
 ];
 
-function StatTable({ location, stats }) {
+function StatTable({ canShowLocation, setCanShowLocation, location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(false)
+
+  const onClick = (e) => {
+    if (e.altKey) {
+      setCanShowLocation(!canShowLocation);
+    }
+    setShowLocation(!showLocation);
+  }
 
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
@@ -29,11 +36,11 @@ function StatTable({ location, stats }) {
   return (
     <Fragment>
       <header>
-        <div className="title" onClick={ () => setShowLocation(!showLocation) }>
+        <div className="title" onClick={ (e) => onClick(e) }>
           > { location }
         </div>
       </header>
-      { showLocation &&
+      { canShowLocation && showLocation &&
         <div>
           <table>
             <tbody>

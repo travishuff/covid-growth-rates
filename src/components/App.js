@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFetchVirusStats } from '../hooks/useFetchVirusStats'
 import StatTable from './StatTable'
 import '../App.css';
 
 function App() {
   const { error, loading, stats } = useFetchVirusStats();
+  const [canShowLocation, setCanShowLocation] = useState(true);
 
   return (
     <div className="App">
@@ -25,6 +26,8 @@ function App() {
                 location={ location }
                 key={ location }
                 stats={ stats }
+                canShowLocation={ canShowLocation }
+                setCanShowLocation={ setCanShowLocation }
               />
             );
           })
