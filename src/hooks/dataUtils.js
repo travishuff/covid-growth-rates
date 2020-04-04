@@ -1,3 +1,7 @@
+export function addCommas(num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
 function transformData(timelineData) {
   let prev = 0;
   const growthNumbers = [];

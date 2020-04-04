@@ -6,14 +6,11 @@ const initialLocations = [
   'United States'
 ];
 
-function StatTable({ canShowLocation, setCanShowLocation, location, stats }) {
+function StatTable({ location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(false)
 
   const onClick = (e) => {
-    if (e.altKey) {
-      setCanShowLocation(!canShowLocation);
-    }
     setShowLocation(!showLocation);
   }
 
@@ -40,7 +37,7 @@ function StatTable({ canShowLocation, setCanShowLocation, location, stats }) {
           > { location }
         </div>
       </header>
-      { canShowLocation && showLocation &&
+      { showLocation &&
         <div>
           <table>
             <tbody>
