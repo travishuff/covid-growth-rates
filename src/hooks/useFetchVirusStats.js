@@ -16,6 +16,7 @@ const countries = {
   'china': 'China',
   'italy': 'Italy',
   's.%20korea': 'South Korea',
+  'sweden': 'Sweden',
 };
 
 export function useFetchVirusStats() {
