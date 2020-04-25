@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useFetchVirusStats } from '../hooks/useFetchVirusStats'
 import StatTable from './StatTable'
 import '../App.css';
