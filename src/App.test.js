@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import App from './App';
+import App from './components/App';
 
-test('renders learn react link', () => {
+test('renders title on main page', () => {
   const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
+  const linkElement = getByText(/COVID-19 Growth Tracker/i);
   expect(linkElement).toBeInTheDocument();
 });
