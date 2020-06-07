@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { getState, getCountry } from './dataUtils'
 
 const states = {
-  CA: 'California',
-  NY: 'New York',
-  LA: 'Louisiana',
-  TX: 'Texas',
-  IL: 'Illinois',
-  MI: 'Michigan',
+  ca: 'California',
+  ny: 'New York',
+  la: 'Louisiana',
+  tx: 'Texas',
+  il: 'Illinois',
+  mi: 'Michigan',
 };
 
 const countries = {
