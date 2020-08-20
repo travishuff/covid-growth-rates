@@ -18,7 +18,7 @@ function App() {
       { error &&
       <div>Error occured getting data.</div> }
 
-      { stats.map(entity => {
+      { stats && stats.map(entity => {
           return entity.map(([location, stats]) => {
             return (
               <StatTable
