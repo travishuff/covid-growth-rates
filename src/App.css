@@ -29,29 +29,28 @@ a:visited {
 .table-heading {
   color: lightgreen;
 }
-
 table {
   width: 50%;
+  text-align: center;
 }
-
 .date {
   width: 20%;
+  text-align: left;
 }
-
-.cases {
-  width: 18%;
-}
-
 .death-cases {
+  width: 15%;
+}
+.death-growth-cases {
+  width: 15%;
+}
+.cases {
+  width: 20%;
+}
+.growth {
   width: 10%;
 }
-
-.death-growth-cases {
-  width: 2%;
-}
-
 .rolling-growth {
-  width: 5%;
+  width: 10%;
 }
 
 @media
@@ -60,32 +59,26 @@ only screen and (max-width: 760px),
   .app-title {
     text-align: center;
   }
-
   table {
     width: 100%;
     font-size: .9rem;
   }
-
   .date {
     width: 20%;
+    text-align: left;
   }
-
-  .cases {
+  .death-cases {
     width: 15%;
   }
-
-  .death-cases {
+  .death-growth-cases {
+    width: 15%;
+  }
+  .cases {
+    width: 20%;
+  }
+  .growth {
     width: 10%;
   }
-
-  .death-growth-cases {
-    width: 2%;
-  }
-
-  .growth {
-    width: 5%;
-  }
-
   .rolling-growth {
     width: 5%;
   }
@@ -104,6 +97,7 @@ only screen and (max-width: 760px),
   font-size: .8rem;
   color: slategrey;
   cursor: pointer;
+  text-align: left;
 }
 
 .credits {

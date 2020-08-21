@@ -2,6 +2,12 @@ export function addCommas(num) {
   if (num > 1000000) {
     return (num / 1000000).toFixed(2) + 'M';
   }
+  if (num > 100000) {
+    return (num / 1000).toFixed(0) + 'k';
+  }
+  if (num > 10000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
   if (num === null) return;
 
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
