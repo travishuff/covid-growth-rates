@@ -43,7 +43,7 @@ export function useFetchVirusStats() {
       }));
 
       const stateFetches = await Promise.all(Object.keys(states).map(state => {
-        return fetch(`https://covidtracking.com/api/v1/states/${state}/daily.json`)
+        return fetch(`https://api.covidtracking.com/api/v1/states/${state}/daily.json`)
         .then(res => res.json())
         .then(json => {
           return [states[state], getState(json)];

@@ -1,4 +1,8 @@
 export function addCommas(num) {
+  if (num > 1000000) {
+    return (num / 1000000).toFixed(2) + ' M';
+  }
+
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
@@ -7,16 +11,17 @@ function transformData(timelineData) {
   const growthNumbers = [];
 
   const dataArr = Object.entries(timelineData)
-  .map(([date, totalCases]) => {
-    const growthNum = prev !== 0 ? Math.round((totalCases/prev - 1) * 100) : 0;
+  .map(([date, casesObj]) => {
+    const growthNum = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
     const growth = prev !== 0 ? `${growthNum}%` : 'n/a';
-    const newCases = totalCases - prev;
-    prev = totalCases;
+    const newCases = casesObj.affected - prev;
+    prev = casesObj.affected;
 
     return [
       date,
-      totalCases,
+      casesObj.affected,
+      casesObj.deaths,
       newCases,
       growth,
     ];
@@ -32,10 +37,11 @@ function transformData(timelineData) {
     : 'n/a';
   });
 
-  return dataArr.map(([date, totalCases, newCases, growth]) => {
+  return dataArr.map(([date, totalCases, totalDeaths, newCases, growth]) => {
     return [
       date,
       totalCases,
+      totalDeaths,
       newCases,
       growth,
       rollingAverageArray.shift(),
@@ -46,7 +52,7 @@ function transformData(timelineData) {
 
 export function getState(json) {
   const stateData = json.reduce((all, item) => {
-    all[item.date] = item.positive;
+    all[item.date] = { affected: item.positive, deaths: item.death };
     return all;
   }, {});
 
@@ -65,7 +71,15 @@ export function getState(json) {
 
 
 export function getCountry(json) {
-  const timelineData = json.timeline.cases;
+  const casesObj = json.timeline.cases;
+  const deathsObj = json.timeline.deaths;
+  let timelineData = {};
+  Object.entries(casesObj).forEach(([date, cases]) => {
+    timelineData[date] = {
+      affected: cases,
+      deaths: deathsObj[date],
+    };
+  });
 
   return transformData(timelineData);
 }
