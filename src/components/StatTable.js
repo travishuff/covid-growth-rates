@@ -17,8 +17,9 @@ function StatTable({ location, stats }) {
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
       <td className="date">Date</td>
-      <td className="cases">Total<br />cases</td>
       <td className="cases">Total<br />deaths</td>
+      <td className="cases">New<br />deaths</td>
+      <td className="cases">Total<br />cases</td>
       <td className="cases">New<br />cases</td>
       <td className="growth">Day-over<br />day</td>
       { showOlderData && <td className="growth">Rolling<br />3-day</td> }

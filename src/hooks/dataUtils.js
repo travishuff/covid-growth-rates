@@ -1,7 +1,8 @@
 export function addCommas(num) {
   if (num > 1000000) {
-    return (num / 1000000).toFixed(2) + ' M';
+    return (num / 1000000).toFixed(2) + 'M';
   }
+  if (num === null) return;
 
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
@@ -9,6 +10,7 @@ export function addCommas(num) {
 function transformData(timelineData) {
   let prev = 0;
   const growthNumbers = [];
+  let prevDeaths = 0;
 
   const dataArr = Object.entries(timelineData)
   .map(([date, casesObj]) => {
@@ -18,10 +20,14 @@ function transformData(timelineData) {
     const newCases = casesObj.affected - prev;
     prev = casesObj.affected;
 
+    const deathGrowth = prevDeaths !== 0 ? casesObj.deaths - prevDeaths : 0;
+    prevDeaths = casesObj.deaths;
+
     return [
       date,
-      casesObj.affected,
       casesObj.deaths,
+      deathGrowth,
+      casesObj.affected,
       newCases,
       growth,
     ];
@@ -37,11 +43,12 @@ function transformData(timelineData) {
     : 'n/a';
   });
 
-  return dataArr.map(([date, totalCases, totalDeaths, newCases, growth]) => {
+  return dataArr.map(([date, totalDeaths, deathGrowth, totalCases, newCases, growth]) => {
     return [
       date,
-      totalCases,
       totalDeaths,
+      deathGrowth,
+      totalCases,
       newCases,
       growth,
       rollingAverageArray.shift(),
