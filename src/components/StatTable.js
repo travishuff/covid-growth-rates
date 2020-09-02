@@ -1,4 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import { Line } from "react-chartjs-2";
+
 import DataRows from './DataRows'
 
 const initialLocations = [
@@ -8,11 +10,43 @@ const initialLocations = [
 
 function StatTable({ location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
-  const [showLocation, setShowLocation] = useState(false)
+  const [showLocation, setShowLocation] = useState(false);
 
   const onClick = (e) => {
     setShowLocation(!showLocation);
-  }
+  };
+
+  const data = {
+    labels: stats.map(stat => {
+      if (stat[4] < 1000000) {
+        return stat[0];
+      }
+    }),
+    datasets: [
+      {
+        label: 'New Cases',
+        data: stats.map(stat => {
+          if (stat[4] < 1000000) {
+            return stat[4];
+          }
+        }),
+        fill: true,
+        backgroundColor: 'rgba(144, 238, 144, 0.2)',
+        borderColor: 'rgba(144, 238, 144, 1)',
+        pointRadius: 0,
+        // options: {
+        //   scales: {
+        //     yAxes: [{
+        //         ticks: {
+        //             min: 50,
+        //             max: 100000,
+        //         },
+        //     }],
+        //   },
+        // },
+      },
+    ],
+  };
 
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
@@ -47,7 +81,12 @@ function StatTable({ location, stats }) {
                 className="older-toggle"
                 onClick={ () => setShowOlderData(!showOlderData) }
                 >
-                <td colSpan="3">show/hide more data</td>
+                <td colSpan="7">
+                  <div>show/hide more data</div>
+                  <div>
+                    <Line data={data} />
+                  </div>
+                </td>
               </tr>
               { tableHeading }
               { stats &&
