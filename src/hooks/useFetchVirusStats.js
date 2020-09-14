@@ -3,9 +3,10 @@ import { getState, getCountry } from './dataUtils'
 
 const states = {
   ca: 'California',
+  tx: 'Texas',
+  az: 'Arizona',
   ny: 'New York',
   la: 'Louisiana',
-  tx: 'Texas',
   il: 'Illinois',
   mi: 'Michigan',
 };

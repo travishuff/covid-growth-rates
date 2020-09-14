@@ -26,7 +26,7 @@ function StatTable({ location, stats }) {
       {
         label: 'New Cases',
         data: stats.map(stat => {
-          if (stat[4] < 1000000) {
+          if (stat[4] < 55000) {
             return stat[4];
           }
         }),
