@@ -5,10 +5,12 @@ const states = {
   ca: 'California',
   tx: 'Texas',
   az: 'Arizona',
+  ut: 'Utah',
   ny: 'New York',
-  la: 'Louisiana',
-  il: 'Illinois',
-  mi: 'Michigan',
+  fl: 'Florida',
+  // la: 'Louisiana',
+  // il: 'Illinois',
+  // mi: 'Michigan',
 };
 
 const countries = {
