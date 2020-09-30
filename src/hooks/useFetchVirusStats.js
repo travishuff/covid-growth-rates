@@ -15,6 +15,7 @@ const states = {
 
 const countries = {
   'usa': 'United States',
+  'canada': 'Canada',
   'uk': 'United Kingdom',
   'china': 'China',
   'italy': 'Italy',
