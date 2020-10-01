@@ -10,7 +10,7 @@ const states = {
   fl: 'Florida',
   // la: 'Louisiana',
   // il: 'Illinois',
-  // mi: 'Michigan',
+  mi: 'Michigan',
 };
 
 const countries = {
