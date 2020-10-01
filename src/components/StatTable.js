@@ -17,17 +17,15 @@ function StatTable({ location, stats }) {
   };
 
   const data = {
-    labels: stats.map(stat => {
-      if (stat[4] < 1000000) {
-        return stat[0];
-      }
-    }),
+    labels: stats.map(stat => stat[0]),
     datasets: [
       {
         label: 'New Cases',
         data: stats.map(stat => {
-          if (stat[4] < 55000) {
+          if (stat[4] < 55000) { // get rid of some incorrect edge cases
             return stat[4];
+          } else {
+            return 0;
           }
         }),
         fill: true,
