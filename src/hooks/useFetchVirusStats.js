@@ -17,10 +17,10 @@ const countries = {
   'usa': 'United States',
   'canada': 'Canada',
   'uk': 'United Kingdom',
-  'china': 'China',
+  // 'china': 'China',
   'italy': 'Italy',
-  's.%20korea': 'South Korea',
-  'sweden': 'Sweden',
+  // 's.%20korea': 'South Korea',
+  // 'sweden': 'Sweden',
 };
 
 export function useFetchVirusStats() {
