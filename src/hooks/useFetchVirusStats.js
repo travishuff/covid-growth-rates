@@ -19,6 +19,7 @@ const countries = {
   'uk': 'United Kingdom',
   // 'china': 'China',
   'italy': 'Italy',
+  'india': 'India',
   // 's.%20korea': 'South Korea',
   // 'sweden': 'Sweden',
 };

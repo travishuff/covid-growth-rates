@@ -8,6 +8,8 @@ const initialLocations = [
   'United States'
 ];
 
+const EDGE_LIMIT = 100000;
+
 function StatTable({ location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(false);
@@ -22,7 +24,7 @@ function StatTable({ location, stats }) {
       {
         label: 'New Cases',
         data: stats.map(stat => {
-          if (stat[4] < 55000) { // get rid of some incorrect edge cases
+          if (stat[4] < EDGE_LIMIT) { // get rid of some incorrect edge cases
             return stat[4];
           } else {
             return 0;
