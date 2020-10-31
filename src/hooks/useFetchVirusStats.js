@@ -20,8 +20,8 @@ const countries = {
   // 'china': 'China',
   'italy': 'Italy',
   'india': 'India',
-  // 's.%20korea': 'South Korea',
-  // 'sweden': 'Sweden',
+  's.%20korea': 'South Korea',
+  'sweden': 'Sweden',
 };
 
 export function useFetchVirusStats() {
@@ -35,29 +35,32 @@ export function useFetchVirusStats() {
       setLoading(true);
       setError(false);
 
-      const countryFetches = await Promise.all(Object.keys(countries).map(country => {
-        return fetch(`https://corona.lmao.ninja/v2/historical/${country}`)
+      const countryFetchesPromise = Promise.all(Object.keys(countries).map(country => {
+        return fetch(`https://disease.sh/v3/covid-19/historical/${country}?lastdays=all`)
         .then(res => res.json())
-        .then(json => {
-          return [countries[country], getCountry(json)];
-        })
+        .then(json => [countries[country], getCountry(json)])
         .catch(err => {
+          console.error(err);
           setError(true);
           setLoading(false);
         });
       }));
 
-      const stateFetches = await Promise.all(Object.keys(states).map(state => {
+      const stateFetchesPromise = Promise.all(Object.keys(states).map(state => {
         return fetch(`https://api.covidtracking.com/api/v1/states/${state}/daily.json`)
         .then(res => res.json())
-        .then(json => {
-          return [states[state], getState(json)];
-        })
+        .then(json => [states[state], getState(json)])
         .catch(err => {
+          console.error(err);
           setError(true);
           setLoading(false);
         });
       }));
+
+      const [countryFetches, stateFetches] = await Promise.all([
+        countryFetchesPromise,
+        stateFetchesPromise,
+      ]);
 
       if (countryFetches && stateFetches) {
         setLoading(false);
