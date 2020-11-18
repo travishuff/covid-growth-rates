@@ -16,6 +16,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
 # Build and Run..
-# docker build -f Dockerfile.prod -t covid-growth-rates .
+# docker build -f Dockerfile -t covid-growth-rates .
 # docker run -it --rm -d -p 8000:80 covid-growth-rates
 # view at: http://localhost:8000/
+# Google Container Repository:  gcr.io/storied-shelter-293416/covid-growth-rates
