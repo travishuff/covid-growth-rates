@@ -38,13 +38,13 @@ table {
   text-align: left;
 }
 .death-cases {
-  width: 15%;
+  width: 10%;
 }
 .death-growth-cases {
-  width: 15%;
+  width: 10%;
 }
 .cases {
-  width: 20%;
+  width: 15%;
 }
 .growth {
   width: 10%;
@@ -61,26 +61,26 @@ only screen and (max-width: 760px),
   }
   table {
     width: 100%;
-    font-size: .9rem;
+    font-size: .8rem;
   }
   .date {
     width: 20%;
     text-align: left;
   }
   .death-cases {
-    width: 15%;
+    width: 10%;
   }
   .death-growth-cases {
     width: 15%;
   }
   .cases {
-    width: 20%;
+    width: 18%;
   }
   .growth {
     width: 10%;
   }
   .rolling-growth {
-    width: 5%;
+    width: 14%;
   }
 }
 

@@ -56,7 +56,7 @@ function StatTable({ location, stats }) {
       <td className="cases">Total<br />cases</td>
       <td className="cases">New<br />cases</td>
       <td className="growth">Day-over<br />day</td>
-      { showOlderData && <td className="rolling-growth">Rolling<br />3-day</td> }
+      { showOlderData && <td className="rolling-growth">3-day</td> }
     </tr>
   ), [showOlderData]);
 
@@ -81,7 +81,7 @@ function StatTable({ location, stats }) {
                 className="older-toggle"
                 onClick={ () => setShowOlderData(!showOlderData) }
                 >
-                <td colSpan="7">
+                <td colSpan={ showOlderData ? "7" : "6" }>
                   <div>show/hide more data</div>
                   <div>
                     <Line data={data} />
