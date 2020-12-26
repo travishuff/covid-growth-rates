@@ -47,19 +47,19 @@ function StatTable({ location, stats }) {
       },
     ],
   };
-  const newDeathsData = {
-    labels: stats.map(stat => stat[0]),
-    datasets: [
-      {
-        label: 'New Deaths',
-        data: stats.map(stat => stat[2]),
-        fill: true,
-        backgroundColor: 'rgba(112, 128, 144, 0.2)',
-        borderColor: 'rgba(112, 128, 144, 1)',
-        pointRadius: 0,
-      },
-    ],
-  };
+  // const newDeathsData = {
+  //   labels: stats.map(stat => stat[0]),
+  //   datasets: [
+  //     {
+  //       label: 'New Deaths',
+  //       data: stats.map(stat => stat[2]),
+  //       fill: true,
+  //       backgroundColor: 'rgba(112, 128, 144, 0.2)',
+  //       borderColor: 'rgba(112, 128, 144, 1)',
+  //       pointRadius: 0,
+  //     },
+  //   ],
+  // };
 
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
@@ -79,6 +79,9 @@ function StatTable({ location, stats }) {
     }
   }, [location]);
 
+  const fourteenDayDeathChange = (((stats[stats.length - 1][1]/stats[stats.length - 15][1]) - 1) * 100).toFixed()
+  const fourteenDayCasesChange = (((stats[stats.length - 1][3]/stats[stats.length - 15][3]) - 1) * 100).toFixed()
+
   return (
     <Fragment>
       <header>
@@ -88,6 +91,10 @@ function StatTable({ location, stats }) {
       </header>
       { showLocation &&
         <div>
+          <div>
+            <div className="fourteenDay">14-day change in # of deaths: { fourteenDayDeathChange }%</div>
+            <div className="fourteenDay">14-day change in # of cases: { fourteenDayCasesChange }%</div>
+          </div>
           <table>
             <tbody>
               <tr
@@ -98,7 +105,7 @@ function StatTable({ location, stats }) {
                   <div>show/hide more data</div>
                   <div>
                     <Line data={newCasesData} />
-                    <Line data={newDeathsData} />
+                    {/* <Line data={newDeathsData} /> */}
                   </div>
                 </td>
               </tr>
