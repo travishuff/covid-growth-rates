@@ -18,7 +18,7 @@ function StatTable({ location, stats }) {
     setShowLocation(!showLocation);
   };
 
-  const data = {
+  const newCasesData = {
     labels: stats.map(stat => stat[0]),
     datasets: [
       {
@@ -44,6 +44,19 @@ function StatTable({ location, stats }) {
         //     }],
         //   },
         // },
+      },
+    ],
+  };
+  const newDeathsData = {
+    labels: stats.map(stat => stat[0]),
+    datasets: [
+      {
+        label: 'New Deaths',
+        data: stats.map(stat => stat[2]),
+        fill: true,
+        backgroundColor: 'rgba(112, 128, 144, 0.2)',
+        borderColor: 'rgba(112, 128, 144, 1)',
+        pointRadius: 0,
       },
     ],
   };
@@ -84,7 +97,8 @@ function StatTable({ location, stats }) {
                 <td colSpan={ showOlderData ? "7" : "6" }>
                   <div>show/hide more data</div>
                   <div>
-                    <Line data={data} />
+                    <Line data={newCasesData} />
+                    <Line data={newDeathsData} />
                   </div>
                 </td>
               </tr>
