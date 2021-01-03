@@ -8,7 +8,7 @@ const initialLocations = [
   'United States'
 ];
 
-const EDGE_LIMIT = 250000;
+const EDGE_LIMIT = 450000;
 
 function StatTable({ location, stats }) {
   const [showOlderData, setShowOlderData] = useState(false);
