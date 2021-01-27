@@ -79,8 +79,8 @@ function StatTable({ location, stats }) {
     }
   }, [location]);
 
-  const fourteenDayDeathChange = (((stats[stats.length - 1][1]/stats[stats.length - 15][1]) - 1) * 100).toFixed()
-  const fourteenDayCasesChange = (((stats[stats.length - 1][3]/stats[stats.length - 15][3]) - 1) * 100).toFixed()
+  const sevenDayDeathChange = (((stats[stats.length - 1][1]/stats[stats.length - 8][1]) - 1) * 100).toFixed()
+  const sevenDayCasesChange = (((stats[stats.length - 1][3]/stats[stats.length - 8][3]) - 1) * 100).toFixed()
 
   return (
     <Fragment>
@@ -88,8 +88,8 @@ function StatTable({ location, stats }) {
         <div className="title" onClick={ (e) => onClick(e) }>
           > { location }
         </div>
-        <div className="fourteenDay">14-day change in deaths: { fourteenDayDeathChange }%</div>
-        <div className="fourteenDay">14-day change in cases: { fourteenDayCasesChange }%</div>
+        <div className="fourteenDay">7-day change in deaths: { sevenDayDeathChange }%</div>
+        <div className="fourteenDay">7-day change in cases: { sevenDayCasesChange }%</div>
       </header>
       { showLocation &&
         <div>
