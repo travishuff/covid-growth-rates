@@ -88,8 +88,8 @@ function StatTable({ location, stats }) {
         <div className="title" onClick={ (e) => onClick(e) }>
           > { location }
         </div>
-        <div className="fourteenDay">7-day change in deaths: { sevenDayDeathChange }%</div>
-        <div className="fourteenDay">7-day change in cases: { sevenDayCasesChange }%</div>
+        {/* <div className="fourteenDay">7-day change in deaths: { sevenDayDeathChange }%</div>
+        <div className="fourteenDay">7-day change in cases: { sevenDayCasesChange }%</div> */}
       </header>
       { showLocation &&
         <div>
