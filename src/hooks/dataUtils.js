@@ -70,6 +70,8 @@ export function getState(json) {
   }, {});
 
   const stateDataModifiedDate = Object.entries(stateData).reduce((all, [date, numCases]) => {
+    if (date < 20200308) { return all; }
+
     const newDate = date.toString();
     const year = newDate.slice(0, 2);
     const month = newDate.slice(4, 6);
