@@ -90,6 +90,8 @@ export function getCountry(json) {
   const deathsObj = json.timeline.deaths;
   let timelineData = {};
   Object.entries(casesObj).forEach(([date, cases]) => {
+    if (Date.parse(date) < 1583654400000) { return; } // start timeline at 3/8/20
+
     timelineData[date] = {
       affected: cases,
       deaths: deathsObj[date],
