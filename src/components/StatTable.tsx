@@ -10,11 +10,11 @@ const initialLocations = [
 
 const EDGE_LIMIT = 450000;
 
-function StatTable({ location, stats }) {
+function StatTable({ location, stats }: { location: string, stats: [] }) {
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(false);
 
-  const onClick = (e) => {
+  const onClick = (e: any) => {
     setShowLocation(!showLocation);
   };
 
@@ -99,7 +99,7 @@ function StatTable({ location, stats }) {
                 className="older-toggle"
                 onClick={ () => setShowOlderData(!showOlderData) }
                 >
-                <td colSpan={ showOlderData ? "7" : "6" }>
+                <td colSpan={ showOlderData ? 7 : 6 }>
                   <div>show/hide more data</div>
                   <div>
                     <Line data={newCasesData} />

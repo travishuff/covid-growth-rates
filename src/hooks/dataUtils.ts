@@ -1,4 +1,4 @@
-export function addCommas(num) {
+export function addCommas(num: number) {
   if (num > 1000000) {
     return (num / 1000000).toFixed(2) + 'M';
   }
@@ -13,14 +13,14 @@ export function addCommas(num) {
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function transformData(timelineData) {
+function transformData(timelineData: {}) {
   let prev = 0;
-  const growthNumbers = [];
+  const growthNumbers: number[] = [];
   let prevDeaths = 0;
 
   const dataArr = Object.entries(timelineData)
-  .map(([date, casesObj]) => {
-    const growthNum = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
+  .map(([date, casesObj]: [string, any]) => {
+    const growthNum: number = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
     const growth = prev !== 0 ? `${growthNum}%` : 'n/a';
     const newCases = casesObj.affected - prev;
@@ -39,7 +39,7 @@ function transformData(timelineData) {
     ];
   });
 
-  const threeDay = [];
+  const threeDay: number[] = [];
   const rollingAverageArray = growthNumbers.map(item => {
     threeDay.push(item);
     if (threeDay.length > 3) threeDay.shift();
@@ -63,13 +63,13 @@ function transformData(timelineData) {
 }
 
 
-export function getState(json) {
-  const stateData = json.reduce((all, item) => {
+export function getState(json: any) {
+  const stateData = json.reduce((all: any, item: any) => {
     all[item.date] = { affected: item.positive, deaths: item.death };
     return all;
   }, {});
 
-  const stateDataModifiedDate = Object.entries(stateData).reduce((all, [date, numCases]) => {
+  const stateDataModifiedDate = Object.entries(stateData).reduce((all: any, [date, numCases]: [any, any]) => {
     if (date < 20200308) { return all; }
 
     const newDate = date.toString();
@@ -85,10 +85,10 @@ export function getState(json) {
 }
 
 
-export function getCountry(json) {
+export function getCountry(json: any) {
   const casesObj = json.timeline.cases;
   const deathsObj = json.timeline.deaths;
-  let timelineData = {};
+  let timelineData: any = {};
   Object.entries(casesObj).forEach(([date, cases]) => {
     if (Date.parse(date) < 1583654400000) { return; } // start timeline at 3/8/20
 

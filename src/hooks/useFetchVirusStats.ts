@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getState, getCountry } from './dataUtils'
 
-const states = {
+const states: any = {
   ca: 'California',
   tx: 'Texas',
   az: 'Arizona',
@@ -13,7 +13,7 @@ const states = {
   mi: 'Michigan',
 };
 
-const countries = {
+const countries: any = {
   'usa': 'United States',
   'canada': 'Canada',
   'uk': 'United Kingdom',
@@ -57,7 +57,7 @@ export function useFetchVirusStats() {
         });
       }));
 
-      const [countryFetches, stateFetches] = await Promise.all([
+      const [countryFetches, stateFetches]: [any, any] = await Promise.all([
         countryFetchesPromise,
         stateFetchesPromise,
       ]);
