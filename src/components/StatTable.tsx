@@ -4,7 +4,7 @@ import { Line } from "react-chartjs-2";
 import DataRows from './DataRows'
 
 const initialLocations = [
-  'California',
+  // 'California',
   'United States'
 ];
 
@@ -47,19 +47,6 @@ function StatTable({ location, stats }: { location: string, stats: [] }) {
       },
     ],
   };
-  // const newDeathsData = {
-  //   labels: stats.map(stat => stat[0]),
-  //   datasets: [
-  //     {
-  //       label: 'New Deaths',
-  //       data: stats.map(stat => stat[2]),
-  //       fill: true,
-  //       backgroundColor: 'rgba(112, 128, 144, 0.2)',
-  //       borderColor: 'rgba(112, 128, 144, 1)',
-  //       pointRadius: 0,
-  //     },
-  //   ],
-  // };
 
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
@@ -103,7 +90,6 @@ function StatTable({ location, stats }: { location: string, stats: [] }) {
                   <div>show/hide more data</div>
                   <div>
                     <Line data={newCasesData} />
-                    {/* <Line data={newDeathsData} /> */}
                   </div>
                 </td>
               </tr>
