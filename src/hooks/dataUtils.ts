@@ -1,4 +1,4 @@
-export function addCommas(num: number) {
+export function addCommas(num: number): string {
   if (num > 1000000) {
     return (num / 1000000).toFixed(2) + 'M';
   }
@@ -8,12 +8,12 @@ export function addCommas(num: number) {
   if (num > 10000) {
     return (num / 1000).toFixed(1) + 'k';
   }
-  if (num === null) return;
+  if (num === null) return '';
 
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function transformData(timelineData: {}) {
+function transformData(timelineData: {}): [string, number, number, number, number, string, string | any][] {
   let prev = 0;
   const growthNumbers: number[] = [];
   let prevDeaths = 0;
@@ -22,8 +22,9 @@ function transformData(timelineData: {}) {
   .map(([date, casesObj]: [string, any]) => {
     const growthNum: number = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
+
     const growth = prev !== 0 ? `${growthNum}%` : 'n/a';
-    const newCases = casesObj.affected - prev;
+    const newCases = Number(casesObj.affected) - prev;
     prev = casesObj.affected;
 
     const deathGrowth = prevDeaths !== 0 ? casesObj.deaths - prevDeaths : 0;
@@ -63,7 +64,7 @@ function transformData(timelineData: {}) {
 }
 
 
-export function getState(json: any) {
+export function getState(json: any): [string, number, number, number, number, string, string | any][] {
   const stateData = json.reduce((all: any, item: any) => {
     all[item.date] = { affected: item.positive, deaths: item.death };
     return all;
@@ -85,7 +86,7 @@ export function getState(json: any) {
 }
 
 
-export function getCountry(json: any) {
+export function getCountry(json: any): [string, number, number, number, number, string, string | any][] {
   const casesObj = json.timeline.cases;
   const deathsObj = json.timeline.deaths;
   let timelineData: any = {};
