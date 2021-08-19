@@ -16,7 +16,7 @@ function App() {
         <div>Loading data...</div> }
 
       { error &&
-      <div>Error occured getting data.</div> }
+      <div>API error occured getting data.</div> }
 
       { stats && stats.map(entity => {
           return entity.map(([location, stats]) => {
