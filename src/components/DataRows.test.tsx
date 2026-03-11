@@ -2,15 +2,14 @@ import { render, screen } from '@testing-library/react';
 import type { StatRow } from '../hooks/dataUtils';
 import DataRows from './DataRows';
 
-// Each row: [date, totalDeaths, deathGrowth, totalCases, newCases, growthRate, threeDay]
 const mockStats: StatRow[] = [
-  ['3/8/20', 10, 2, 500, 100, '25%', 'n/a'],
-  ['3/9/20', 15, 5, 700, 200, '40%', 'n/a'],
-  ['3/10/20', 20, 5, 900, 200, '29%', '31%'],
-  ['3/11/20', 30, 10, 1200, 300, '33%', '34%'],
-  ['3/12/20', 50, 20, 1700, 500, '42%', '35%'],
-  ['3/13/20', 80, 30, 2300, 600, '35%', '37%'],
-  ['3/14/20', 120, 40, 3000, 700, '30%', '36%'],
+  { date: '3/8/20', totalDeaths: 10, newDeaths: 2, totalCases: 500, newCases: 100, dayOverDay: '25%', rollingAverage: 'n/a' },
+  { date: '3/9/20', totalDeaths: 15, newDeaths: 5, totalCases: 700, newCases: 200, dayOverDay: '40%', rollingAverage: 'n/a' },
+  { date: '3/10/20', totalDeaths: 20, newDeaths: 5, totalCases: 900, newCases: 200, dayOverDay: '29%', rollingAverage: '31%' },
+  { date: '3/11/20', totalDeaths: 30, newDeaths: 10, totalCases: 1200, newCases: 300, dayOverDay: '33%', rollingAverage: '34%' },
+  { date: '3/12/20', totalDeaths: 50, newDeaths: 20, totalCases: 1700, newCases: 500, dayOverDay: '42%', rollingAverage: '35%' },
+  { date: '3/13/20', totalDeaths: 80, newDeaths: 30, totalCases: 2300, newCases: 600, dayOverDay: '35%', rollingAverage: '37%' },
+  { date: '3/14/20', totalDeaths: 120, newDeaths: 40, totalCases: 3000, newCases: 700, dayOverDay: '30%', rollingAverage: '36%' },
 ];
 
 describe('DataRows', () => {
@@ -55,7 +54,7 @@ describe('DataRows', () => {
 
   it('formats large numbers with addCommas', () => {
     const bigStats: StatRow[] = [
-      ['3/14/20', 1500, 100, 15000, 2000, '15%', '14%'],
+      { date: '3/14/20', totalDeaths: 1500, newDeaths: 100, totalCases: 15000, newCases: 2000, dayOverDay: '15%', rollingAverage: '14%' },
     ];
     render(
       <table><tbody>

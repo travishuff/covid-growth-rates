@@ -44,13 +44,13 @@ function StatTable({ location, stats }: { location: string, stats: StatRow[] }) 
   const rowsId = `rows-${locationSlug}`;
 
   const newCasesData = {
-    labels: stats.map(stat => stat[0]),
+    labels: stats.map(stat => stat.date),
     datasets: [
       {
         label: 'New Cases',
         data: stats.map(stat => {
-          if (stat[4] < EDGE_LIMIT) { // get rid of some incorrect edge cases
-            return stat[4];
+          if (stat.newCases < EDGE_LIMIT) { // get rid of some incorrect edge cases
+            return stat.newCases;
           } else {
             return 0;
           }
@@ -85,8 +85,8 @@ function StatTable({ location, stats }: { location: string, stats: StatRow[] }) 
     </tr>
   ), [showOlderData]);
 
-  const sevenDayDeathChange = (((stats[stats.length - 1][1]/stats[stats.length - 15][1]) - 1) * 100).toFixed()
-  const sevenDayCasesChange = (((stats[stats.length - 1][3]/stats[stats.length - 15][3]) - 1) * 100).toFixed()
+  const sevenDayDeathChange = (((stats[stats.length - 1].totalDeaths / stats[stats.length - 15].totalDeaths) - 1) * 100).toFixed()
+  const sevenDayCasesChange = (((stats[stats.length - 1].totalCases / stats[stats.length - 15].totalCases) - 1) * 100).toFixed()
 
   return (
     <Fragment>

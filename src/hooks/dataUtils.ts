@@ -1,4 +1,12 @@
-export type StatRow = [string, number, number, number, number, string, string];
+export interface StatRow {
+  date: string;
+  totalDeaths: number;
+  newDeaths: number;
+  totalCases: number;
+  newCases: number;
+  dayOverDay: string;
+  rollingAverage: string;
+}
 
 interface CasesEntry {
   affected: number;
@@ -46,7 +54,7 @@ function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
   const growthNumbers: number[] = [];
   let prevDeaths = 0;
 
-  const dataArr = Object.entries(timelineData)
+  const rows = Object.entries(timelineData)
   .sort(([dateA], [dateB]) => parseMdyDateToTimestamp(dateA) - parseMdyDateToTimestamp(dateB))
   .map(([date, casesObj]) => {
     const growthNum: number = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
@@ -59,14 +67,14 @@ function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
     const deathGrowth = prevDeaths !== 0 ? casesObj.deaths - prevDeaths : 0;
     prevDeaths = casesObj.deaths;
 
-    return [
+    return {
       date,
-      casesObj.deaths,
-      deathGrowth,
-      casesObj.affected,
+      totalDeaths: casesObj.deaths,
+      newDeaths: deathGrowth,
+      totalCases: casesObj.affected,
       newCases,
-      growth,
-    ];
+      dayOverDay: growth,
+    };
   });
 
   const threeDay: number[] = [];
@@ -79,17 +87,10 @@ function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
     : 'n/a';
   });
 
-  return dataArr.map(([date, totalDeaths, deathGrowth, totalCases, newCases, growth]) => {
-    return [
-      date,
-      totalDeaths,
-      deathGrowth,
-      totalCases,
-      newCases,
-      growth,
-      rollingAverageArray.shift(),
-    ] as StatRow;
-  });
+  return rows.map((row, index) => ({
+    ...row,
+    rollingAverage: rollingAverageArray[index],
+  }));
 }
 
 

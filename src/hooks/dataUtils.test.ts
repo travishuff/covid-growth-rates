@@ -49,33 +49,41 @@ describe('getCountry', () => {
     expect(result.length).toBeGreaterThan(0);
   });
 
-  it('each row has 7 elements: date, deaths, deathGrowth, cases, newCases, growth, rollingAvg', () => {
+  it('each row has expected fields', () => {
     const result = getCountry(mockCountryJson);
     result.forEach(row => {
-      expect(row).toHaveLength(7);
+      expect(row).toEqual(expect.objectContaining({
+        date: expect.any(String),
+        totalDeaths: expect.any(Number),
+        newDeaths: expect.any(Number),
+        totalCases: expect.any(Number),
+        newCases: expect.any(Number),
+        dayOverDay: expect.any(String),
+        rollingAverage: expect.any(String),
+      }));
     });
   });
 
   it('filters out entries before 3/8/20', () => {
     const result = getCountry(mockCountryJson);
     // 3/7/20 is before 3/8/20 (1583654400000), so it should be excluded
-    const dates = result.map(row => row[0]);
+    const dates = result.map(row => row.date);
     expect(dates).not.toContain('3/7/20');
   });
 
   it('calculates new cases correctly', () => {
     const result = getCountry(mockCountryJson);
     // 3/9/20: 800 - 600 = 200 new cases
-    const march9 = result.find(row => row[0] === '3/9/20');
+    const march9 = result.find(row => row.date === '3/9/20');
     expect(march9).toBeDefined();
-    expect(march9![4]).toBe(200);
+    expect(march9!.newCases).toBe(200);
   });
 
   it('calculates death growth correctly', () => {
     const result = getCountry(mockCountryJson);
     // 3/9/20: 12 - 8 = 4 new deaths
-    const march9 = result.find(row => row[0] === '3/9/20');
-    expect(march9![2]).toBe(4);
+    const march9 = result.find(row => row.date === '3/9/20');
+    expect(march9!.newDeaths).toBe(4);
   });
 });
 
@@ -99,14 +107,14 @@ describe('getStatesFromNytCsv', () => {
 
   it('filters out entries before 2020-03-08', () => {
     const result = getStatesFromNytCsv(mockCsv, ['California']);
-    const dates = result[0][1].map(row => row[0]);
+    const dates = result[0][1].map(row => row.date);
     expect(dates).not.toContain('3/7/20');
   });
 
   it('calculates new cases correctly', () => {
     const result = getStatesFromNytCsv(mockCsv, ['California']);
-    const march9 = result[0][1].find(row => row[0] === '3/9/20');
+    const march9 = result[0][1].find(row => row.date === '3/9/20');
     expect(march9).toBeDefined();
-    expect(march9![4]).toBe(20);
+    expect(march9!.newCases).toBe(20);
   });
 });
