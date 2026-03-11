@@ -15,7 +15,7 @@ function App() {
         <div>Loading data...</div> }
 
       { error &&
-      <div>API error occured getting data!!</div> }
+      <div>API error occurred while fetching data.</div> }
 
       { stats && stats.map(entity => {
           return entity.map(([location, stats]) => {
@@ -30,15 +30,15 @@ function App() {
       }) }
 
       <p className="credits">
-        Country-level data source from Johns Hopkins CSSE repository:
+        Country-level data source:
         <br />
-        <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series</a>
+        <a href="https://disease.sh/">https://disease.sh/</a>
       </p>
 
       <p className="credits">
-        State-level data source:
+        State-level data source (NYT COVID-19 data):
         <br />
-        <a href="https://covidtracking.com/about-tracker/">https://covidtracking.com/about-tracker/</a>
+        <a href="https://github.com/nytimes/covid-19-data">https://github.com/nytimes/covid-19-data</a>
       </p>
 
       <p className="credits">

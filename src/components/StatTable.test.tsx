@@ -4,14 +4,22 @@ import StatTable from './StatTable';
 
 // Need 15+ entries for StatTable to compute 14-day change stats
 function makeStats(count: number): StatRow[] {
-  const stats = [];
+  const stats: StatRow[] = [];
   for (let i = 0; i < count; i++) {
     const date = `3/${8 + i}/20`;
     const totalCases = 100 * (i + 1);
     const newCases = 100;
     const totalDeaths = 5 * (i + 1);
-    const deathGrowth = 5;
-    stats.push([date, totalDeaths, deathGrowth, totalCases, newCases, '10%', '10%'] as StatRow);
+    const newDeaths = 5;
+    stats.push({
+      date,
+      totalDeaths,
+      newDeaths,
+      totalCases,
+      newCases,
+      dayOverDay: '10%',
+      rollingAverage: '10%',
+    });
   }
   return stats;
 }

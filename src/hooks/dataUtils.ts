@@ -1,14 +1,16 @@
-export type StatRow = [string, number, number, number, number, string, string];
+export interface StatRow {
+  date: string;
+  totalDeaths: number;
+  newDeaths: number;
+  totalCases: number;
+  newCases: number;
+  dayOverDay: string;
+  rollingAverage: string;
+}
 
 interface CasesEntry {
   affected: number;
   deaths: number;
-}
-
-interface StateApiEntry {
-  date: number;
-  positive: number;
-  death: number;
 }
 
 interface CountryApiResponse {
@@ -33,12 +35,27 @@ export function addCommas(num: number): string {
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+const ISO_DATE_CUTOFF = '2020-03-08';
+const MDY_DATE_CUTOFF = Date.UTC(2020, 2, 8);
+
+function parseMdyDateToTimestamp(date: string): number {
+  const [month, day, year] = date.split('/').map(Number);
+  const fullYear = year < 100 ? 2000 + year : year;
+  return Date.UTC(fullYear, month - 1, day);
+}
+
+function formatIsoDateToMdy(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-');
+  return `${Number(month)}/${Number(day)}/${year.slice(2)}`;
+}
+
 function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
   let prev = 0;
   const growthNumbers: number[] = [];
   let prevDeaths = 0;
 
-  const dataArr = Object.entries(timelineData)
+  const rows = Object.entries(timelineData)
+  .sort(([dateA], [dateB]) => parseMdyDateToTimestamp(dateA) - parseMdyDateToTimestamp(dateB))
   .map(([date, casesObj]) => {
     const growthNum: number = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
@@ -50,14 +67,14 @@ function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
     const deathGrowth = prevDeaths !== 0 ? casesObj.deaths - prevDeaths : 0;
     prevDeaths = casesObj.deaths;
 
-    return [
+    return {
       date,
-      casesObj.deaths,
-      deathGrowth,
-      casesObj.affected,
+      totalDeaths: casesObj.deaths,
+      newDeaths: deathGrowth,
+      totalCases: casesObj.affected,
       newCases,
-      growth,
-    ];
+      dayOverDay: growth,
+    };
   });
 
   const threeDay: number[] = [];
@@ -70,48 +87,72 @@ function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
     : 'n/a';
   });
 
-  return dataArr.map(([date, totalDeaths, deathGrowth, totalCases, newCases, growth]) => {
-    return [
-      date,
-      totalDeaths,
-      deathGrowth,
-      totalCases,
-      newCases,
-      growth,
-      rollingAverageArray.shift(),
-    ] as StatRow;
-  });
+  return rows.map((row, index) => ({
+    ...row,
+    rollingAverage: rollingAverageArray[index],
+  }));
 }
 
 
-export function getState(json: StateApiEntry[]): StatRow[] {
-  const stateData = json.reduce((all: Record<string, CasesEntry>, item) => {
-    all[item.date] = { affected: item.positive, deaths: item.death };
-    return all;
-  }, {});
+export function getStatesFromNytCsv(csvText: string, states: string[]): [string, StatRow[]][] {
+  if (!csvText.trim()) {
+    return [];
+  }
 
-  const stateDataModifiedDate = Object.entries(stateData).reduce((all: Record<string, CasesEntry>, [date, numCases]) => {
-    if (Number(date) < 20200308) { return all; }
+  const stateSet = new Set(states);
+  const timelineByState: Record<string, Record<string, CasesEntry>> = {};
+  states.forEach(state => {
+    timelineByState[state] = {};
+  });
 
-    const newDate = date.toString();
-    const year = newDate.slice(0, 2);
-    const month = newDate.slice(4, 6);
-    const day = newDate.slice(6);
-    const formattedDate = `${month}/${day}/${year}`
-    all[formattedDate] = numCases;
-    return all;
-  }, {});
+  const lines = csvText.trim().split(/\r?\n/);
+  const header = lines.shift();
+  if (!header) {
+    return [];
+  }
 
-  return transformData(stateDataModifiedDate);
+  const columns = header.split(',');
+  const dateIndex = columns.indexOf('date');
+  const stateIndex = columns.indexOf('state');
+  const casesIndex = columns.indexOf('cases');
+  const deathsIndex = columns.indexOf('deaths');
+
+  if (dateIndex === -1 || stateIndex === -1 || casesIndex === -1 || deathsIndex === -1) {
+    return [];
+  }
+
+  for (const line of lines) {
+    if (!line) continue;
+    const parts = line.split(',');
+    const state = parts[stateIndex];
+    if (!stateSet.has(state)) continue;
+
+    const isoDate = parts[dateIndex];
+    if (isoDate < ISO_DATE_CUTOFF) continue;
+
+    const cases = Number(parts[casesIndex]);
+    const deaths = Number(parts[deathsIndex]);
+    timelineByState[state][formatIsoDateToMdy(isoDate)] = {
+      affected: Number.isFinite(cases) ? cases : 0,
+      deaths: Number.isFinite(deaths) ? deaths : 0,
+    };
+  }
+
+  return states
+    .map((state) => [state, transformData(timelineByState[state] ?? {})] as [string, StatRow[]])
+    .filter(([, stats]) => stats.length > 0);
 }
 
 
 export function getCountry(json: CountryApiResponse): StatRow[] {
+  if (!json?.timeline?.cases || !json?.timeline?.deaths) {
+    return [];
+  }
   const casesObj = json.timeline.cases;
   const deathsObj = json.timeline.deaths;
   const timelineData: Record<string, CasesEntry> = {};
   Object.entries(casesObj).forEach(([date, cases]) => {
-    if (Date.parse(date) < 1583654400000) { return; } // start timeline at 3/8/20
+    if (parseMdyDateToTimestamp(date) < MDY_DATE_CUTOFF) { return; } // start timeline at 3/8/20
 
     timelineData[date] = {
       affected: cases,
