@@ -25,21 +25,41 @@ const mockCountryResponse = {
   },
 };
 
-const mockStateResponse = Array.from({ length: 20 }, (_, i) => ({
-  date: 20200327 - i,
-  positive: 10000 - i * 400,
-  death: 200 - i * 8,
-}));
+const mockStateCsv = [
+  'date,state,fips,cases,deaths',
+  '2020-03-27,California,06,10000,200',
+  '2020-03-26,California,06,9600,192',
+  '2020-03-25,California,06,9200,184',
+  '2020-03-24,California,06,8800,176',
+  '2020-03-23,California,06,8400,168',
+  '2020-03-22,California,06,8000,160',
+  '2020-03-21,California,06,7600,152',
+  '2020-03-20,California,06,7200,144',
+  '2020-03-19,California,06,6800,136',
+  '2020-03-18,California,06,6400,128',
+  '2020-03-17,California,06,6000,120',
+  '2020-03-16,California,06,5600,112',
+  '2020-03-15,California,06,5200,104',
+  '2020-03-14,California,06,4800,96',
+  '2020-03-13,California,06,4400,88',
+  '2020-03-12,California,06,4000,80',
+  '2020-03-11,California,06,3600,72',
+  '2020-03-10,California,06,3200,64',
+  '2020-03-09,California,06,2800,56',
+  '2020-03-08,California,06,2400,48',
+].join('\n');
 
 beforeEach(() => {
   global.fetch = vi.fn((url: string) => {
     if (url.includes('disease.sh')) {
       return Promise.resolve({
+        ok: true,
         json: () => Promise.resolve(mockCountryResponse),
       });
     }
     return Promise.resolve({
-      json: () => Promise.resolve(mockStateResponse),
+      ok: true,
+      text: () => Promise.resolve(mockStateCsv),
     });
   }) as unknown as typeof global.fetch;
 });

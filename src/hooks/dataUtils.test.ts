@@ -1,4 +1,4 @@
-import { addCommas, getState, getCountry } from './dataUtils';
+import { addCommas, getStatesFromNytCsv, getCountry } from './dataUtils';
 
 describe('addCommas', () => {
   it('formats numbers over 1 million as M', () => {
@@ -79,35 +79,34 @@ describe('getCountry', () => {
   });
 });
 
-describe('getState', () => {
-  const mockStateJson = [
-    { date: 20200315, positive: 1000, death: 10 },
-    { date: 20200314, positive: 800, death: 8 },
-    { date: 20200313, positive: 600, death: 5 },
-    { date: 20200312, positive: 400, death: 3 },
-    { date: 20200311, positive: 200, death: 1 },
-    { date: 20200310, positive: 100, death: 0 },
-    // before the 3/8/20 cutoff
-    { date: 20200307, positive: 50, death: 0 },
-  ];
+describe('getStatesFromNytCsv', () => {
+  const mockCsv = [
+    'date,state,fips,cases,deaths',
+    '2020-03-07,California,06,50,1',
+    '2020-03-08,California,06,60,2',
+    '2020-03-09,California,06,80,3',
+    '2020-03-08,Texas,48,30,0',
+    '2020-03-09,Texas,48,45,1',
+  ].join('\n');
 
-  it('returns an array of data rows', () => {
-    const result = getState(mockStateJson);
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBeGreaterThan(0);
+  it('returns stats for requested states', () => {
+    const result = getStatesFromNytCsv(mockCsv, ['California', 'Texas']);
+    expect(result.length).toBe(2);
+    const california = result.find(([state]) => state === 'California');
+    expect(california).toBeDefined();
+    expect(california![1].length).toBeGreaterThan(0);
   });
 
-  it('filters out entries before 3/8/20 (date < 20200308)', () => {
-    const result = getState(mockStateJson);
-    const dates = result.map(row => row[0]);
-    // 3/7/20 should be excluded (20200307 < 20200308)
-    expect(dates).not.toContain('03/07/20');
+  it('filters out entries before 2020-03-08', () => {
+    const result = getStatesFromNytCsv(mockCsv, ['California']);
+    const dates = result[0][1].map(row => row[0]);
+    expect(dates).not.toContain('3/7/20');
   });
 
-  it('each row has 7 elements', () => {
-    const result = getState(mockStateJson);
-    result.forEach(row => {
-      expect(row).toHaveLength(7);
-    });
+  it('calculates new cases correctly', () => {
+    const result = getStatesFromNytCsv(mockCsv, ['California']);
+    const march9 = result[0][1].find(row => row[0] === '3/9/20');
+    expect(march9).toBeDefined();
+    expect(march9![4]).toBe(20);
   });
 });
