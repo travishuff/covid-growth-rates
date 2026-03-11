@@ -115,6 +115,8 @@ export function useFetchVirusStats() {
   }, []);
 
   return {
+    stateStats,
+    countryStats,
     stats: [
       stateStats,
       countryStats,

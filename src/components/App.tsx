@@ -1,52 +1,108 @@
-import { useFetchVirusStats } from '../hooks/useFetchVirusStats'
-import StatTable from './StatTable'
+import { useState } from 'react';
+import { useFetchVirusStats } from '../hooks/useFetchVirusStats';
+import TabGroup from './TabGroup';
+import ComparisonChart from './ComparisonChart';
+import MetricSelector from './MetricSelector';
+import TimeRangeSelector from './TimeRangeSelector';
+import SummaryCard from './SummaryCard';
+import DetailTable from './DetailTable';
+import type { Tab } from './TabGroup';
+import type { Metric } from './MetricSelector';
+import type { TimeRange } from './TimeRangeSelector';
 import '../App.css';
 
 function App() {
-  const { error, loading, stats } = useFetchVirusStats();
+  const { stateStats, countryStats, loading, error } = useFetchVirusStats();
+
+  const [activeTab, setActiveTab] = useState<Tab>('states');
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [metric, setMetric] = useState<Metric>('newCases');
+  const [timeRange, setTimeRange] = useState<TimeRange>(365);
+
+  const locations = activeTab === 'states' ? stateStats : countryStats;
+
+  const selectedData = selectedLocation
+    ? locations.find(([name]) => name === selectedLocation)
+    : null;
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    setSelectedLocation(null);
+  };
+
+  const handleCardClick = (name: string) => {
+    setSelectedLocation((prev) => (prev === name ? null : name));
+  };
 
   return (
     <div className="App">
-      <div className="app-title">
-        COVID-19 Growth Tracker
+      <div className="app-title">COVID-19 Growth Tracker</div>
+      <div className="app-subtitle">
+        Comparing historical case and death trends across locations
       </div>
 
-      { loading &&
-        <div>Loading data...</div> }
+      <TabGroup activeTab={activeTab} onTabChange={handleTabChange} />
 
-      { error &&
-      <div>API error occurred while fetching data.</div> }
+      {loading && (
+        <div>
+          <div className="skeleton skeleton-chart" />
+          <div className="cards-grid">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="skeleton skeleton-card" />
+            ))}
+          </div>
+        </div>
+      )}
 
-      { stats && stats.map(entity => {
-          return entity.map(([location, stats]) => {
-            return (
-              <StatTable
-                location={ location }
-                key={ location }
-                stats={ stats }
+      {error && (
+        <div className="error-banner">
+          Some data sources failed to load. Showing available data.
+        </div>
+      )}
+
+      {!loading && locations.length > 0 && (
+        <>
+          <ComparisonChart
+            locations={locations}
+            metric={metric}
+            timeRange={timeRange}
+          />
+
+          <div className="controls-row">
+            <MetricSelector metric={metric} onChange={setMetric} />
+            <TimeRangeSelector range={timeRange} onChange={setTimeRange} />
+          </div>
+
+          <div className="cards-grid">
+            {locations.map(([name, stats], i) => (
+              <SummaryCard
+                key={name}
+                location={name}
+                stats={stats}
+                index={i}
+                selected={selectedLocation === name}
+                metric={metric}
+                onClick={() => handleCardClick(name)}
               />
-            );
-          })
-      }) }
+            ))}
+          </div>
 
-      <p className="credits">
-        Country-level data source:
-        <br />
-        <a href="https://disease.sh/">https://disease.sh/</a>
-      </p>
+          {selectedData && (
+            <DetailTable
+              location={selectedData[0]}
+              stats={selectedData[1]}
+            />
+          )}
+        </>
+      )}
 
-      <p className="credits">
-        State-level data source (NYT COVID-19 data):
-        <br />
-        <a href="https://github.com/nytimes/covid-19-data">https://github.com/nytimes/covid-19-data</a>
-      </p>
-
-      <p className="credits">
-        Source code for this repository
-        <br />
-        <a href="https://github.com/travishuff/covid-growth-rates">https://github.com/travishuff/covid-growth-rates</a>
-      </p>
-
+      <div className="credits">
+        Country data: <a href="https://disease.sh/">disease.sh</a>
+        {' | '}
+        State data: <a href="https://github.com/nytimes/covid-19-data">NYT COVID-19 data</a>
+        {' | '}
+        <a href="https://github.com/travishuff/covid-growth-rates">Source code</a>
+      </div>
     </div>
   );
 }

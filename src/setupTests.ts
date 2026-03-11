@@ -8,3 +8,16 @@ HTMLCanvasElement.prototype.getContext = (() => null) as unknown as typeof HTMLC
 vi.mock('react-chartjs-2', () => ({
   Line: () => null,
 }));
+
+// Mock chart.js registration to avoid canvas errors
+vi.mock('chart.js', () => ({
+  Chart: { register: vi.fn() },
+  CategoryScale: class {},
+  LinearScale: class {},
+  PointElement: class {},
+  LineElement: class {},
+  Filler: class {},
+  Tooltip: class {},
+  Legend: class {},
+  Title: class {},
+}));
