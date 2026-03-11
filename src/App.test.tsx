@@ -1,4 +1,4 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from './components/App';
 
@@ -75,21 +75,45 @@ test('renders title on main page', async () => {
   expect(screen.getByText(/COVID-19 Growth Tracker/i)).toBeInTheDocument();
 });
 
+test('renders tab group with US States and Countries', async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  expect(screen.getByRole('tab', { name: 'US States' })).toBeInTheDocument();
+  expect(screen.getByRole('tab', { name: 'Countries' })).toBeInTheDocument();
+});
+
 test('renders credits section with data source links', async () => {
   await act(async () => {
     render(<App />);
   });
-  expect(screen.getByText(/Country-level data source/i)).toBeInTheDocument();
-  expect(screen.getByText(/State-level data source/i)).toBeInTheDocument();
+  expect(screen.getByText(/Country data/i)).toBeInTheDocument();
+  expect(screen.getByText(/State data/i)).toBeInTheDocument();
   expect(screen.getByText(/Source code/i)).toBeInTheDocument();
 });
 
-test('renders stat tables after data loads', async () => {
+test('renders summary cards after data loads', async () => {
   await act(async () => {
     render(<App />);
   });
   await waitFor(() => {
-    expect(screen.getByText('> United States')).toBeInTheDocument();
+    expect(screen.getByText('California')).toBeInTheDocument();
+  });
+});
+
+test('switches between States and Countries tabs', async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByText('California')).toBeInTheDocument();
+  });
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('tab', { name: 'Countries' }));
+  });
+  await waitFor(() => {
+    expect(screen.getByText('United States')).toBeInTheDocument();
   });
 });
 
@@ -102,4 +126,44 @@ test('calls disease.sh API for each country', async () => {
     String(args[0]).includes('disease.sh')
   );
   expect(diseaseCalls.length).toBeGreaterThan(0);
+});
+
+test('clicking a card shows detail table', async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByText('California')).toBeInTheDocument();
+  });
+
+  await act(async () => {
+    fireEvent.click(screen.getByText('California'));
+  });
+  // Detail table should show the location heading
+  const headings = screen.getAllByText('California');
+  expect(headings.length).toBeGreaterThanOrEqual(2); // card + detail heading
+});
+
+test('metric selector buttons are rendered', async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByText('California')).toBeInTheDocument();
+  });
+  expect(screen.getByText('New Cases')).toBeInTheDocument();
+  expect(screen.getByText('New Deaths')).toBeInTheDocument();
+  expect(screen.getByText('Growth %')).toBeInTheDocument();
+});
+
+test('time range selector buttons are rendered', async () => {
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByText('California')).toBeInTheDocument();
+  });
+  expect(screen.getByText('90 days')).toBeInTheDocument();
+  expect(screen.getByText('1 year')).toBeInTheDocument();
+  expect(screen.getByText('All')).toBeInTheDocument();
 });
