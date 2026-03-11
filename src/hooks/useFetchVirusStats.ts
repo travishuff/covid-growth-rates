@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getState, getCountry } from './dataUtils'
+import type { StatRow } from './dataUtils';
+import { getState, getCountry } from './dataUtils';
 
-const states: any = {
+const states: Record<string, string> = {
   ca: 'California',
   tx: 'Texas',
   az: 'Arizona',
@@ -13,7 +14,7 @@ const states: any = {
   mi: 'Michigan',
 };
 
-const countries: any = {
+const countries: Record<string, string> = {
   'usa': 'United States',
   'canada': 'Canada',
   'uk': 'United Kingdom',
@@ -24,9 +25,11 @@ const countries: any = {
   'sweden': 'Sweden',
 };
 
+type LocationStats = [string, StatRow[]][];
+
 export function useFetchVirusStats() {
-  const [stateStats, setStateStats] = useState([]);
-  const [countryStats, setCountryStats] = useState([]);
+  const [stateStats, setStateStats] = useState<LocationStats>([]);
+  const [countryStats, setCountryStats] = useState<LocationStats>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -38,7 +41,7 @@ export function useFetchVirusStats() {
       const countryFetchesPromise = Promise.all(Object.keys(countries).map(country => {
         return fetch(`https://disease.sh/v3/covid-19/historical/${country}?lastdays=all`)
         .then(res => res.json())
-        .then(json => [countries[country], getCountry(json)])
+        .then(json => [countries[country], getCountry(json)] as [string, StatRow[]])
         .catch(err => {
           console.error(err);
           setError(true);
@@ -49,7 +52,7 @@ export function useFetchVirusStats() {
       const stateFetchesPromise = Promise.all(Object.keys(states).map(state => {
         return fetch(`https://api.covidtracking.com/api/v1/states/${state}/daily.json`)
         .then(res => res.json())
-        .then(json => [states[state], getState(json)])
+        .then(json => [states[state], getState(json)] as [string, StatRow[]])
         .catch(err => {
           console.error(err);
           setError(true);
@@ -57,15 +60,15 @@ export function useFetchVirusStats() {
         });
       }));
 
-      const [countryFetches, stateFetches]: [any, any] = await Promise.all([
+      const [countryFetches, stateFetches] = await Promise.all([
         countryFetchesPromise,
         stateFetchesPromise,
       ]);
 
       if (countryFetches && stateFetches) {
         setLoading(false);
-        setCountryStats(countryFetches);
-        setStateStats(stateFetches);
+        setCountryStats(countryFetches.filter(Boolean) as LocationStats);
+        setStateStats(stateFetches.filter(Boolean) as LocationStats);
       }
     })();
   }, []);

@@ -1,3 +1,23 @@
+export type StatRow = [string, number, number, number, number, string, string];
+
+interface CasesEntry {
+  affected: number;
+  deaths: number;
+}
+
+interface StateApiEntry {
+  date: number;
+  positive: number;
+  death: number;
+}
+
+interface CountryApiResponse {
+  timeline: {
+    cases: Record<string, number>;
+    deaths: Record<string, number>;
+  };
+}
+
 export function addCommas(num: number): string {
   if (num > 1000000) {
     return (num / 1000000).toFixed(2) + 'M';
@@ -13,13 +33,13 @@ export function addCommas(num: number): string {
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-function transformData(timelineData: {}): [string, number, number, number, number, string, string | any][] {
+function transformData(timelineData: Record<string, CasesEntry>): StatRow[] {
   let prev = 0;
   const growthNumbers: number[] = [];
   let prevDeaths = 0;
 
   const dataArr = Object.entries(timelineData)
-  .map(([date, casesObj]: [string, any]) => {
+  .map(([date, casesObj]) => {
     const growthNum: number = prev !== 0 ? Math.round((casesObj.affected/prev - 1) * 100) : 0;
     growthNumbers.push(growthNum);
 
@@ -46,7 +66,7 @@ function transformData(timelineData: {}): [string, number, number, number, numbe
     if (threeDay.length > 3) threeDay.shift();
 
     return threeDay.length === 3
-    ? `${Math.round((threeDay.reduce((all, item) => all += item)) / 3)}%`
+    ? `${Math.round((threeDay.reduce((all, item) => all + item)) / 3)}%`
     : 'n/a';
   });
 
@@ -59,19 +79,19 @@ function transformData(timelineData: {}): [string, number, number, number, numbe
       newCases,
       growth,
       rollingAverageArray.shift(),
-    ]
+    ] as StatRow;
   });
 }
 
 
-export function getState(json: any): [string, number, number, number, number, string, string | any][] {
-  const stateData = json.reduce((all: any, item: any) => {
+export function getState(json: StateApiEntry[]): StatRow[] {
+  const stateData = json.reduce((all: Record<string, CasesEntry>, item) => {
     all[item.date] = { affected: item.positive, deaths: item.death };
     return all;
   }, {});
 
-  const stateDataModifiedDate = Object.entries(stateData).reduce((all: any, [date, numCases]: [any, any]) => {
-    if (date < 20200308) { return all; }
+  const stateDataModifiedDate = Object.entries(stateData).reduce((all: Record<string, CasesEntry>, [date, numCases]) => {
+    if (Number(date) < 20200308) { return all; }
 
     const newDate = date.toString();
     const year = newDate.slice(0, 2);
@@ -86,10 +106,10 @@ export function getState(json: any): [string, number, number, number, number, st
 }
 
 
-export function getCountry(json: any): [string, number, number, number, number, string, string | any][] {
+export function getCountry(json: CountryApiResponse): StatRow[] {
   const casesObj = json.timeline.cases;
   const deathsObj = json.timeline.deaths;
-  let timelineData: any = {};
+  const timelineData: Record<string, CasesEntry> = {};
   Object.entries(casesObj).forEach(([date, cases]) => {
     if (Date.parse(date) < 1583654400000) { return; } // start timeline at 3/8/20
 

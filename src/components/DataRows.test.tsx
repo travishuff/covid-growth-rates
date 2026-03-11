@@ -1,9 +1,9 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import type { StatRow } from '../hooks/dataUtils';
 import DataRows from './DataRows';
 
 // Each row: [date, totalDeaths, deathGrowth, totalCases, newCases, growthRate, threeDay]
-const mockStats: any[] = [
+const mockStats: StatRow[] = [
   ['3/8/20', 10, 2, 500, 100, '25%', 'n/a'],
   ['3/9/20', 15, 5, 700, 200, '40%', 'n/a'],
   ['3/10/20', 20, 5, 900, 200, '29%', '31%'],
@@ -54,7 +54,7 @@ describe('DataRows', () => {
   });
 
   it('formats large numbers with addCommas', () => {
-    const bigStats: any[] = [
+    const bigStats: StatRow[] = [
       ['3/14/20', 1500, 100, 15000, 2000, '15%', '14%'],
     ];
     render(

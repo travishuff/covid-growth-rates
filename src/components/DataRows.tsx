@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
+import type { StatRow } from '../hooks/dataUtils';
 import { addCommas } from '../hooks/dataUtils'
 
-function DataRows({ stats, showOlderData = false }: { stats: [], showOlderData: boolean }) {
+function DataRows({ stats, showOlderData = false }: { stats: StatRow[], showOlderData: boolean }) {
   const recentStats = stats.slice(0).splice(-7);
 
   const returnRow = (
@@ -10,8 +11,8 @@ function DataRows({ stats, showOlderData = false }: { stats: [], showOlderData: 
     deathGrowth: number,
     numCases: number,
     newCases: number,
-    growthRate: number,
-    threeDay: number
+    growthRate: string,
+    threeDay: string
   ) => (
     <tr key={ `${date}${numCases}${threeDay}` }>
       <td className="date">{ date }</td>
@@ -26,10 +27,10 @@ function DataRows({ stats, showOlderData = false }: { stats: [], showOlderData: 
 
   return (
     <Fragment>
-      { showOlderData && stats.map(([date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay]: [string, number, number, number, number, number, number]) => {
+      { showOlderData && stats.map(([date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay]) => {
         return numCases > 0 && returnRow(date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay);
       }) }
-      { !showOlderData && recentStats.map(([date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay]: [string, number, number, number, number, number, number]) => {
+      { !showOlderData && recentStats.map(([date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay]) => {
         return numCases > 0 && returnRow(date, numDeaths, deathGrowth, numCases, newCases, growthRate, threeDay);
       }) }
     </Fragment>

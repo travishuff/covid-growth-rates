@@ -1,5 +1,16 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
-import { Line } from "react-chartjs-2";
+import { Fragment, useMemo, useState } from 'react';
+import type { StatRow } from '../hooks/dataUtils';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler);
 
 import DataRows from './DataRows'
 
@@ -10,11 +21,11 @@ const initialLocations = [
 
 const EDGE_LIMIT = 450000;
 
-function StatTable({ location, stats }: { location: string, stats: [] }) {
+function StatTable({ location, stats }: { location: string, stats: StatRow[] }) {
   const [showOlderData, setShowOlderData] = useState(false);
-  const [showLocation, setShowLocation] = useState(false);
+  const [showLocation, setShowLocation] = useState(() => initialLocations.includes(location));
 
-  const onClick = (e: any) => {
+  const onClick = () => {
     setShowLocation(!showLocation);
   };
 
@@ -60,19 +71,13 @@ function StatTable({ location, stats }: { location: string, stats: [] }) {
     </tr>
   ), [showOlderData]);
 
-  useEffect(() => {
-    if (initialLocations.includes(location)) {
-      setShowLocation(true);
-    }
-  }, [location]);
-
   const sevenDayDeathChange = (((stats[stats.length - 1][1]/stats[stats.length - 15][1]) - 1) * 100).toFixed()
   const sevenDayCasesChange = (((stats[stats.length - 1][3]/stats[stats.length - 15][3]) - 1) * 100).toFixed()
 
   return (
     <Fragment>
       <header>
-        <div className="title" onClick={ (e) => onClick(e) }>
+        <div className="title" onClick={ onClick }>
           &gt; { location }
         </div>
         <div className="fourteenDay">14-day change in deaths: { sevenDayDeathChange }%</div>
