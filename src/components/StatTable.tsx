@@ -25,9 +25,23 @@ function StatTable({ location, stats }: { location: string, stats: StatRow[] }) 
   const [showOlderData, setShowOlderData] = useState(false);
   const [showLocation, setShowLocation] = useState(() => initialLocations.includes(location));
 
-  const onClick = () => {
-    setShowLocation(!showLocation);
+  const toggleLocation = () => {
+    setShowLocation((prev) => !prev);
   };
+
+  const toggleOlderData = () => {
+    setShowOlderData((prev) => !prev);
+  };
+
+  const locationSlug = useMemo(() => {
+    return location
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-+|-+$)/g, '');
+  }, [location]);
+
+  const tableSectionId = `stats-${locationSlug}`;
+  const rowsId = `rows-${locationSlug}`;
 
   const newCasesData = {
     labels: stats.map(stat => stat[0]),
@@ -61,13 +75,13 @@ function StatTable({ location, stats }: { location: string, stats: StatRow[] }) 
 
   const tableHeading = useMemo(() => (
     <tr className="table-heading">
-      <td className="date">Date</td>
-      <td className="death-cases">Total<br />deaths</td>
-      <td className="death-growth-cases">New<br />deaths</td>
-      <td className="cases">Total<br />cases</td>
-      <td className="cases">New<br />cases</td>
-      <td className="growth">Day-over<br />day</td>
-      { showOlderData && <td className="rolling-growth">3-day</td> }
+      <th scope="col" className="date">Date</th>
+      <th scope="col" className="death-cases">Total<br />deaths</th>
+      <th scope="col" className="death-growth-cases">New<br />deaths</th>
+      <th scope="col" className="cases">Total<br />cases</th>
+      <th scope="col" className="cases">New<br />cases</th>
+      <th scope="col" className="growth">Day-over<br />day</th>
+      { showOlderData && <th scope="col" className="rolling-growth">3-day</th> }
     </tr>
   ), [showOlderData]);
 
@@ -77,33 +91,47 @@ function StatTable({ location, stats }: { location: string, stats: StatRow[] }) 
   return (
     <Fragment>
       <header>
-        <div className="title" onClick={ onClick }>
+        <button
+          type="button"
+          className="title"
+          onClick={ toggleLocation }
+          aria-expanded={ showLocation }
+          aria-controls={ tableSectionId }
+        >
           &gt; { location }
-        </div>
+        </button>
         <div className="fourteenDay">14-day change in deaths: { sevenDayDeathChange }%</div>
         <div className="fourteenDay">14-day change in cases: { sevenDayCasesChange }%</div>
       </header>
       { showLocation &&
-        <div>
+        <section id={ tableSectionId }>
           <table>
-            <tbody>
-              <tr
-                className="older-toggle"
-                onClick={ () => setShowOlderData(!showOlderData) }
-                >
-                <td colSpan={ showOlderData ? 7 : 6 }>
-                  <div>show/hide more data</div>
-                  <div>
+            <caption className="sr-only">Daily COVID-19 statistics for { location }</caption>
+            <thead>
+              { tableHeading }
+            </thead>
+            <tbody id={ rowsId }>
+              <tr>
+                <td className="toggle-cell" colSpan={ showOlderData ? 7 : 6 }>
+                  <button
+                    type="button"
+                    className="older-toggle"
+                    onClick={ toggleOlderData }
+                    aria-expanded={ showOlderData }
+                    aria-controls={ rowsId }
+                  >
+                    show/hide more data
+                  </button>
+                  <div className="sparkline" aria-hidden="true">
                     <Line data={newCasesData} />
                   </div>
                 </td>
               </tr>
-              { tableHeading }
               { stats &&
                 <DataRows stats={ stats } showOlderData={ showOlderData } /> }
             </tbody>
           </table>
-          </div> }
+          </section> }
     </Fragment>
   );
 }

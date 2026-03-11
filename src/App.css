@@ -16,6 +16,11 @@
   font-size: 1.5rem;
   margin-top: 1.5rem;
   cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
 }
 
 a {
@@ -103,10 +108,38 @@ only screen and (max-width: 760px),
   color: slategrey;
   cursor: pointer;
   text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
 }
 
 .credits {
   margin-top: 5vh;
   font-size: .8rem;
   color: lightgreen;
+}
+
+.toggle-cell {
+  text-align: left;
+}
+
+.sparkline {
+  margin-top: .5rem;
+}
+
+.title:focus-visible,
+.older-toggle:focus-visible {
+  outline: 2px solid lightgreen;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
