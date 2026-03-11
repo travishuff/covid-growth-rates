@@ -1,5 +1,5 @@
-import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import App from './components/App';
 
 const mockCountryResponse = {
@@ -32,7 +32,7 @@ const mockStateResponse = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 beforeEach(() => {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url: string) => {
     if (url.includes('disease.sh')) {
       return Promise.resolve({
         json: () => Promise.resolve(mockCountryResponse),
@@ -41,11 +41,11 @@ beforeEach(() => {
     return Promise.resolve({
       json: () => Promise.resolve(mockStateResponse),
     });
-  });
+  }) as unknown as typeof global.fetch;
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test('renders title on main page', async () => {
@@ -77,8 +77,9 @@ test('calls disease.sh API for each country', async () => {
   await act(async () => {
     render(<App />);
   });
-  const diseaseCalls = global.fetch.mock.calls.filter(([url]) =>
-    url.includes('disease.sh')
+  const fetchMock = global.fetch as ReturnType<typeof vi.fn>;
+  const diseaseCalls = fetchMock.mock.calls.filter((args) =>
+    String(args[0]).includes('disease.sh')
   );
   expect(diseaseCalls.length).toBeGreaterThan(0);
 });
