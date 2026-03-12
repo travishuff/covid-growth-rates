@@ -1,8 +1,11 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import type { StatRow } from '../hooks/dataUtils';
 import { addCommas } from '../hooks/dataUtils';
 import type { Metric } from './MetricSelector';
+
+const CHANGE_LOOKBACK_DAYS = 15;
+const SPARKLINE_DAYS = 60;
 
 const PALETTE = [
   '#4e79a7', '#b85450', '#59a14f', '#9c6b8a',
@@ -23,15 +26,15 @@ function SummaryCard({ location, stats, index, selected, metric, onClick }: Summ
   const last = stats[stats.length - 1];
 
   const change14d = useMemo(() => {
-    if (stats.length < 15) return null;
+    if (stats.length < CHANGE_LOOKBACK_DAYS) return null;
     const recent = stats[stats.length - 1];
-    const older = stats[stats.length - 15];
+    const older = stats[stats.length - CHANGE_LOOKBACK_DAYS];
     if (!older.totalCases || !recent.totalCases) return null;
     return ((recent.totalCases / older.totalCases - 1) * 100).toFixed(1);
   }, [stats]);
 
   const sparklineData = useMemo(() => {
-    const tail = stats.slice(-60);
+    const tail = stats.slice(-SPARKLINE_DAYS);
     const values = tail.map((s) => {
       if (metric === 'newCases') return s.newCases;
       if (metric === 'newDeaths') return s.newDeaths;
@@ -87,4 +90,4 @@ function SummaryCard({ location, stats, index, selected, metric, onClick }: Summ
   );
 }
 
-export default SummaryCard;
+export default memo(SummaryCard);

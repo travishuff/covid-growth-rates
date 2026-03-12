@@ -23,6 +23,11 @@ const PALETTE = [
   '#c49c2a', '#3d8a8a', '#7b7f86',
 ];
 
+const MAX_VISIBLE_LABELS = 12;
+const CHART_TITLE_COLOR = '#6b6b6b';
+const AXIS_TICK_COLOR = '#999';
+const GRID_COLOR = '#f0ede8';
+
 interface ComparisonChartProps {
   locations: [string, StatRow[]][];
   metric: Metric;
@@ -83,8 +88,7 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
       };
     });
 
-    // Thin out labels for readability — show ~12 labels max
-    const step = Math.max(1, Math.floor(allDates.length / 12));
+    const step = Math.max(1, Math.floor(allDates.length / MAX_VISIBLE_LABELS));
     const labels = allDates.map((d, i) => (i % step === 0 ? d : ''));
 
     return { labels, datasets, _rawLabels: allDates };
@@ -127,7 +131,7 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
         text: getMetricLabel(metric),
         font: { size: 14, weight: 'normal' as const },
         padding: { bottom: 12 },
-        color: '#6b6b6b',
+        color: CHART_TITLE_COLOR,
       },
     },
     scales: {
@@ -135,15 +139,15 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
         grid: { display: false },
         ticks: {
           font: { size: 11 },
-          color: '#999',
+          color: AXIS_TICK_COLOR,
           maxRotation: 0,
         },
       },
       y: {
-        grid: { color: '#f0ede8' },
+        grid: { color: GRID_COLOR },
         ticks: {
           font: { size: 11 },
-          color: '#999',
+          color: AXIS_TICK_COLOR,
           callback: (value: string | number) => {
             const num = typeof value === 'string' ? parseFloat(value) : value;
             if (metric === 'growth') return `${num}%`;

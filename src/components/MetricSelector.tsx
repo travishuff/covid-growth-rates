@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 export type Metric = 'newCases' | 'newDeaths' | 'growth';
 
 const METRICS: { id: Metric; label: string }[] = [
@@ -28,4 +30,4 @@ function MetricSelector({ metric, onChange }: MetricSelectorProps) {
   );
 }
 
-export default MetricSelector;
+export default memo(MetricSelector);

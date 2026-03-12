@@ -167,3 +167,45 @@ test('time range selector buttons are rendered', async () => {
   expect(screen.getByText('1 year')).toBeInTheDocument();
   expect(screen.getByText('All')).toBeInTheDocument();
 });
+
+test('shows error banner when all fetches fail', async () => {
+  global.fetch = vi.fn(() =>
+    Promise.resolve({ ok: false, status: 500, statusText: 'Internal Server Error' })
+  ) as unknown as typeof global.fetch;
+
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      /failed to load/i
+    );
+  });
+});
+
+test('shows error banner when a single country fetch fails', async () => {
+  let callCount = 0;
+  global.fetch = vi.fn((url: string) => {
+    if (url.includes('disease.sh')) {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.reject(new Error('network error'));
+      }
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockCountryResponse),
+      });
+    }
+    return Promise.resolve({
+      ok: true,
+      text: () => Promise.resolve(mockStateCsv),
+    });
+  }) as unknown as typeof global.fetch;
+
+  await act(async () => {
+    render(<App />);
+  });
+  await waitFor(() => {
+    expect(screen.getByRole('alert')).toHaveTextContent(/failed to load/i);
+  });
+});

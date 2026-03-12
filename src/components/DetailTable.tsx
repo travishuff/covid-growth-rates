@@ -1,5 +1,8 @@
+import { memo } from 'react';
 import type { StatRow } from '../hooks/dataUtils';
 import { addCommas } from '../hooks/dataUtils';
+
+const VISIBLE_ROWS = 30;
 
 interface DetailTableProps {
   location: string;
@@ -7,8 +10,7 @@ interface DetailTableProps {
 }
 
 function DetailTable({ location, stats }: DetailTableProps) {
-  // Show last 30 rows, most recent first
-  const rows = stats.slice(-30).reverse();
+  const rows = stats.slice(-VISIBLE_ROWS).reverse();
 
   return (
     <div className="detail-section">
@@ -37,4 +39,4 @@ function DetailTable({ location, stats }: DetailTableProps) {
   );
 }
 
-export default DetailTable;
+export default memo(DetailTable);
