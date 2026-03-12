@@ -1,0 +1,50 @@
+name: Version bump
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "npm"
+
+      - name: Determine bump type
+        id: bump
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = (context.payload.pull_request.labels || []).map((label) => label.name);
+            let bump = 'patch';
+            if (labels.includes('semver:major')) bump = 'major';
+            else if (labels.includes('semver:minor')) bump = 'minor';
+            core.setOutput('bump', bump);
+
+      - name: Bump version
+        run: node scripts/bump-version.mjs ${{ steps.bump.outputs.bump }}
+
+      - name: Commit and push
+        run: |
+          VERSION=$(node --input-type=commonjs -e "const fs = require('node:fs'); const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')); console.log(pkg.version)")
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to v${VERSION}"
+          git push
