@@ -1,6 +1,7 @@
 # COVID-19 Growth Tracker
 
 ![Node.js CI](https://github.com/travishuff/covid-growth-rates/workflows/Node.js%20CI/badge.svg)
+![Version](https://img.shields.io/github/package-json/v/travishuff/covid-growth-rates?label=version)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/80e2fa0b-df3c-4024-bae7-ac82e706c4f7/deploy-status)](https://app.netlify.com/projects/covid-growth-tracker/deploys)
 
 ## Overview
@@ -41,3 +42,14 @@ Live site: [covid-growth-tracker.netlify.app](https://covid-growth-tracker.netli
 - `npm test` – run unit tests
 - `npm run lint` – run ESLint
 - `npm run typecheck` – run TypeScript in no-emit mode
+
+## Versioning (semver)
+
+This repo bumps the app version automatically when a PR is merged into `master` or `main`.
+
+- Add one of these labels to your PR:
+  - `semver:major` → major bump
+  - `semver:minor` → minor bump
+  - no label → patch bump (default)
+
+The UI displays the major version as `v.<major>` in the footer.

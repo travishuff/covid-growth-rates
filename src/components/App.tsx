@@ -13,6 +13,7 @@ import '../App.css';
 
 function App() {
   const { stateStats, countryStats, loading, error } = useFetchVirusStats();
+  const appVersion = __APP_VERSION__;
 
   const [activeTab, setActiveTab] = useState<Tab>('states');
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
@@ -104,6 +105,8 @@ function App() {
         State data: <a href="https://github.com/nytimes/covid-19-data">NYT COVID-19 data</a>
         {' | '}
         <a href="https://github.com/travishuff/covid-growth-rates">Source code</a>
+        {' | '}
+        <span className="app-version">v.{appVersion}</span>
       </div>
     </div>
   );
