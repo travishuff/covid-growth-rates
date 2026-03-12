@@ -23,14 +23,10 @@ const PALETTE = [
   '#c49c2a', '#3d8a8a', '#7b7f86',
 ];
 
-const DEFAULT_MAX_VISIBLE_LABELS = 10;
-const YEAR_MAX_VISIBLE_LABELS = 9;
-const ALL_MAX_VISIBLE_LABELS = 10;
-const DEFAULT_MIN_VISIBLE_LABELS = 6;
-const YEAR_MIN_VISIBLE_LABELS = 6;
-const ALL_MIN_VISIBLE_LABELS = 6;
-const MOBILE_MAX_VISIBLE_LABELS = 6;
-const MOBILE_MIN_VISIBLE_LABELS = 4;
+const DEFAULT_LABEL_DENSITY = { max: 10, min: 6, tailGap: 1 };
+const YEAR_LABEL_DENSITY = { max: 9, min: 6, tailGap: 4 };
+const ALL_LABEL_DENSITY = { max: 10, min: 6, tailGap: 3 };
+const MOBILE_LABEL_LIMITS = { max: 6, min: 4 };
 const CHART_TITLE_COLOR = '#6b6b6b';
 const AXIS_TICK_COLOR = '#999';
 const GRID_COLOR = '#f0ede8';
@@ -51,6 +47,27 @@ function getMetricLabel(metric: Metric): string {
   if (metric === 'newCases') return 'New Cases';
   if (metric === 'newDeaths') return 'New Deaths';
   return 'Growth %';
+}
+
+function getLabelDensity(timeRange: TimeRange) {
+  if (timeRange === 365) return YEAR_LABEL_DENSITY;
+  if (timeRange === 0) return ALL_LABEL_DENSITY;
+  return DEFAULT_LABEL_DENSITY;
+}
+
+function buildLabelIndexes(total: number, step: number, tailGap: number) {
+  const labelIndexes = new Set<number>();
+  for (let i = 0; i < total; i += step) {
+    labelIndexes.add(i);
+  }
+  const lastIndex = total - 1;
+  if (lastIndex >= 0) {
+    labelIndexes.add(lastIndex);
+    for (let i = 1; i <= tailGap; i += 1) {
+      labelIndexes.delete(lastIndex - i);
+    }
+  }
+  return labelIndexes;
 }
 
 function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps) {
@@ -95,45 +112,19 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
       };
     });
 
-    const baseMaxVisibleLabels = timeRange === 365
-      ? YEAR_MAX_VISIBLE_LABELS
-      : timeRange === 0
-        ? ALL_MAX_VISIBLE_LABELS
-        : DEFAULT_MAX_VISIBLE_LABELS;
-    const baseMinVisibleLabels = timeRange === 365
-      ? YEAR_MIN_VISIBLE_LABELS
-      : timeRange === 0
-        ? ALL_MIN_VISIBLE_LABELS
-        : DEFAULT_MIN_VISIBLE_LABELS;
+    const density = getLabelDensity(timeRange);
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
     const maxVisibleLabels = isMobile
-      ? Math.min(baseMaxVisibleLabels, MOBILE_MAX_VISIBLE_LABELS)
-      : baseMaxVisibleLabels;
+      ? Math.min(density.max, MOBILE_LABEL_LIMITS.max)
+      : density.max;
     const minVisibleLabels = isMobile
-      ? Math.min(baseMinVisibleLabels, MOBILE_MIN_VISIBLE_LABELS)
-      : baseMinVisibleLabels;
+      ? Math.min(density.min, MOBILE_LABEL_LIMITS.min)
+      : density.min;
     const maxStepForMin = Math.max(1, Math.floor(allDates.length / minVisibleLabels));
     const baseStep = Math.max(1, Math.floor(allDates.length / maxVisibleLabels));
     const step = Math.min(baseStep, maxStepForMin);
-    const suppressTailLabels = timeRange !== 90;
-    const labelIndexes = new Set<number>();
-    allDates.forEach((_, i) => {
-      if (i % step === 0) {
-        labelIndexes.add(i);
-      }
-    });
-    const lastIndex = allDates.length - 1;
-    if (lastIndex >= 0) {
-      labelIndexes.add(lastIndex);
-      const tailGap = timeRange === 365
-        ? Math.min(4, step)
-        : suppressTailLabels
-          ? Math.min(3, step)
-          : 1;
-      for (let i = 1; i <= tailGap; i += 1) {
-        labelIndexes.delete(lastIndex - i);
-      }
-    }
+    const tailGap = timeRange === 90 ? 1 : Math.min(density.tailGap, step);
+    const labelIndexes = buildLabelIndexes(allDates.length, step, tailGap);
 
     return {
       labels: allDates,
