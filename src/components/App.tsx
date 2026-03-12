@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useFetchVirusStats } from '../hooks/useFetchVirusStats';
 import TabGroup from './TabGroup';
 import ComparisonChart from './ComparisonChart';
@@ -25,14 +25,14 @@ function App() {
     ? locations.find(([name]) => name === selectedLocation)
     : null;
 
-  const handleTabChange = (tab: Tab) => {
+  const handleTabChange = useCallback((tab: Tab) => {
     setActiveTab(tab);
     setSelectedLocation(null);
-  };
+  }, []);
 
-  const handleCardClick = (name: string) => {
+  const handleCardClick = useCallback((name: string) => {
     setSelectedLocation((prev) => (prev === name ? null : name));
-  };
+  }, []);
 
   return (
     <div className="App">
@@ -43,22 +43,24 @@ function App() {
 
       <TabGroup activeTab={activeTab} onTabChange={handleTabChange} />
 
-      {loading && (
-        <div>
-          <div className="skeleton skeleton-chart" />
-          <div className="cards-grid">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="skeleton skeleton-card" />
-            ))}
+      <div aria-live="polite">
+        {loading && (
+          <div>
+            <div className="skeleton skeleton-chart" />
+            <div className="cards-grid">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="skeleton skeleton-card" />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {error && (
-        <div className="error-banner">
-          Some data sources failed to load. Showing available data.
-        </div>
-      )}
+        {error && (
+          <div className="error-banner" role="alert">
+            Some data sources failed to load. Showing available data.
+          </div>
+        )}
+      </div>
 
       {!loading && locations.length > 0 && (
         <>

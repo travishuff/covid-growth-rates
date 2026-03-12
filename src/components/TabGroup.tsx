@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 export type Tab = 'states' | 'countries';
 
 interface TabGroupProps {
@@ -28,4 +30,4 @@ function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
   );
 }
 
-export default TabGroup;
+export default memo(TabGroup);

@@ -99,11 +99,11 @@ export function useFetchVirusStats() {
         setStateStats(nextStateStats);
         setLoading(false);
         setError(hadError);
-      } catch (err) {
+      } catch (err: unknown) {
         if (signal.aborted) {
           return;
         }
-        console.error(err);
+        console.error('Failed to fetch virus stats:', err);
         setLoading(false);
         setError(true);
       }
@@ -117,10 +117,6 @@ export function useFetchVirusStats() {
   return {
     stateStats,
     countryStats,
-    stats: [
-      stateStats,
-      countryStats,
-    ],
     loading,
     error,
   }

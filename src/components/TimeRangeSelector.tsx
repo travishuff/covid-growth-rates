@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 export type TimeRange = 90 | 365 | 0;
 
 const RANGES: { id: TimeRange; label: string }[] = [
@@ -28,4 +30,4 @@ function TimeRangeSelector({ range, onChange }: TimeRangeSelectorProps) {
   );
 }
 
-export default TimeRangeSelector;
+export default memo(TimeRangeSelector);

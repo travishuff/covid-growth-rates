@@ -118,6 +118,7 @@ export function getStatesFromNytCsv(csvText: string, states: string[]): [string,
   const deathsIndex = columns.indexOf('deaths');
 
   if (dateIndex === -1 || stateIndex === -1 || casesIndex === -1 || deathsIndex === -1) {
+    console.warn('CSV is missing required columns. Expected: date, state, cases, deaths');
     return [];
   }
 
