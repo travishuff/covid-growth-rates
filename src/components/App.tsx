@@ -106,9 +106,7 @@ function App() {
         {' | '}
         <a href="https://github.com/travishuff/covid-growth-rates">Source code</a>
         {' | '}
-        <span className="app-version">
-          v.{appVersion.split('.')[0]}
-        </span>
+        <span className="app-version">v.{appVersion}</span>
       </div>
     </div>
   );
