@@ -23,7 +23,14 @@ const PALETTE = [
   '#c49c2a', '#3d8a8a', '#7b7f86',
 ];
 
-const MAX_VISIBLE_LABELS = 12;
+const DEFAULT_MAX_VISIBLE_LABELS = 10;
+const YEAR_MAX_VISIBLE_LABELS = 9;
+const ALL_MAX_VISIBLE_LABELS = 10;
+const DEFAULT_MIN_VISIBLE_LABELS = 6;
+const YEAR_MIN_VISIBLE_LABELS = 6;
+const ALL_MIN_VISIBLE_LABELS = 6;
+const MOBILE_MAX_VISIBLE_LABELS = 6;
+const MOBILE_MIN_VISIBLE_LABELS = 4;
 const CHART_TITLE_COLOR = '#6b6b6b';
 const AXIS_TICK_COLOR = '#999';
 const GRID_COLOR = '#f0ede8';
@@ -88,10 +95,52 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
       };
     });
 
-    const step = Math.max(1, Math.floor(allDates.length / MAX_VISIBLE_LABELS));
-    const labels = allDates.map((d, i) => (i % step === 0 ? d : ''));
+    const baseMaxVisibleLabels = timeRange === 365
+      ? YEAR_MAX_VISIBLE_LABELS
+      : timeRange === 0
+        ? ALL_MAX_VISIBLE_LABELS
+        : DEFAULT_MAX_VISIBLE_LABELS;
+    const baseMinVisibleLabels = timeRange === 365
+      ? YEAR_MIN_VISIBLE_LABELS
+      : timeRange === 0
+        ? ALL_MIN_VISIBLE_LABELS
+        : DEFAULT_MIN_VISIBLE_LABELS;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+    const maxVisibleLabels = isMobile
+      ? Math.min(baseMaxVisibleLabels, MOBILE_MAX_VISIBLE_LABELS)
+      : baseMaxVisibleLabels;
+    const minVisibleLabels = isMobile
+      ? Math.min(baseMinVisibleLabels, MOBILE_MIN_VISIBLE_LABELS)
+      : baseMinVisibleLabels;
+    const maxStepForMin = Math.max(1, Math.floor(allDates.length / minVisibleLabels));
+    const baseStep = Math.max(1, Math.floor(allDates.length / maxVisibleLabels));
+    const step = Math.min(baseStep, maxStepForMin);
+    const suppressTailLabels = timeRange !== 90;
+    const labelIndexes = new Set<number>();
+    allDates.forEach((_, i) => {
+      if (i % step === 0) {
+        labelIndexes.add(i);
+      }
+    });
+    const lastIndex = allDates.length - 1;
+    if (lastIndex >= 0) {
+      labelIndexes.add(lastIndex);
+      const tailGap = timeRange === 365
+        ? Math.min(4, step)
+        : suppressTailLabels
+          ? Math.min(3, step)
+          : 1;
+      for (let i = 1; i <= tailGap; i += 1) {
+        labelIndexes.delete(lastIndex - i);
+      }
+    }
 
-    return { labels, datasets, _rawLabels: allDates };
+    return {
+      labels: allDates,
+      datasets,
+      _rawLabels: allDates,
+      _labelIndexes: labelIndexes,
+    };
   }, [locations, metric, timeRange]);
 
   const options = useMemo(() => ({
@@ -140,7 +189,14 @@ function ComparisonChart({ locations, metric, timeRange }: ComparisonChartProps)
         ticks: {
           font: { size: 11 },
           color: AXIS_TICK_COLOR,
+          autoSkip: false,
           maxRotation: 0,
+          callback: (_value: string | number, index: number) => {
+            if (!chartData || !chartData._labelIndexes) return '';
+            return chartData._labelIndexes.has(index)
+              ? chartData._rawLabels[index] ?? ''
+              : '';
+          },
         },
       },
       y: {
