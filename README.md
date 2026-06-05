@@ -28,20 +28,20 @@ Live site: [covid-growth-tracker.netlify.app](https://covid-growth-tracker.netli
 ## Local development
 
 1. Install dependencies:
-   - `npm install`
+   - `bun install`
 2. Start the dev server:
-   - `npm run dev`
+   - `bun run dev`
 3. Open the app:
    - http://localhost:3000
 
 ## Scripts
 
-- `npm run dev` – start the Vite dev server
-- `npm run build` – build for production (outputs to `dist/`)
-- `npm run preview` – preview the production build locally
-- `npm test` – run unit tests
-- `npm run lint` – run ESLint
-- `npm run typecheck` – run TypeScript in no-emit mode
+- `bun run dev` – start the Vite dev server
+- `bun run build` – build for production (outputs to `dist/`)
+- `bun run preview` – preview the production build locally
+- `bun run test` – run unit tests
+- `bun run lint` – run ESLint
+- `bun run typecheck` – run TypeScript in no-emit mode
 
 ## Versioning (semver)
 

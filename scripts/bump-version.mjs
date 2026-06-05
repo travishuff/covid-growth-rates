@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 const bump = (process.argv[2] || 'patch').toLowerCase();
 const allowed = new Set(['major', 'minor', 'patch']);
@@ -37,15 +37,5 @@ const nextVersion = `${nextMajor}.${nextMinor}.${nextPatch}`;
 packageJson.version = nextVersion;
 
 writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);
-
-const lockPath = new URL('../package-lock.json', import.meta.url);
-if (existsSync(lockPath)) {
-  const lockJson = JSON.parse(readFileSync(lockPath, 'utf-8'));
-  lockJson.version = nextVersion;
-  if (lockJson.packages?.['']) {
-    lockJson.packages[''].version = nextVersion;
-  }
-  writeFileSync(lockPath, `${JSON.stringify(lockJson, null, 2)}\n`);
-}
 
 console.log(nextVersion);
