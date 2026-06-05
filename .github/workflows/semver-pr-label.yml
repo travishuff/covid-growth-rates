@@ -1,0 +1,87 @@
+name: Semver PR label
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Label PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const issue_number = pr.number;
+
+            const existingSemverLabels = (pr.labels || [])
+              .map((label) => label.name)
+              .filter((name) => name.startsWith('semver:'));
+
+            for (const name of existingSemverLabels) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name,
+                });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+            }
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner,
+              repo,
+              pull_number: issue_number,
+              per_page: 100,
+            });
+
+            const title = pr.title || '';
+            const body = pr.body || '';
+            const commitMessages = commits.map((commit) => commit.commit.message);
+            const signals = [title, body, ...commitMessages];
+
+            const hasBreakingChange = signals.some((text) =>
+              /(^|\n)BREAKING[- ]CHANGE:/.test(text) ||
+              /^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._-]+\))?!: .+/m.test(text) ||
+              /(^|\n)\s*semver:\s*major\s*$/im.test(text)
+            );
+            const hasFeature = signals.some((text) =>
+              /^feat(\([a-z0-9._-]+\))?: .+/m.test(text) ||
+              /(^|\n)\s*semver:\s*minor\s*$/im.test(text)
+            );
+
+            const nextLabel = hasBreakingChange
+              ? 'semver:major'
+              : hasFeature
+                ? 'semver:minor'
+                : null;
+
+            if (nextLabel) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number,
+                labels: [nextLabel],
+              });
+            }
+
+            core.info(nextLabel ? `Applied ${nextLabel}.` : 'No semver label applied; patch is the default.');
