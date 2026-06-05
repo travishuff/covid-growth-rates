@@ -50,7 +50,7 @@ const mockStateCsv = [
 ].join('\n');
 
 beforeEach(() => {
-  global.fetch = vi.fn((url: string) => {
+  globalThis.fetch = vi.fn((url: string) => {
     if (url.includes('disease.sh')) {
       return Promise.resolve({
         ok: true,
@@ -61,7 +61,7 @@ beforeEach(() => {
       ok: true,
       text: () => Promise.resolve(mockStateCsv),
     });
-  }) as unknown as typeof global.fetch;
+  }) as unknown as typeof globalThis.fetch;
 });
 
 afterEach(() => {
@@ -121,7 +121,7 @@ test('calls disease.sh API for each country', async () => {
   await act(async () => {
     render(<App />);
   });
-  const fetchMock = global.fetch as ReturnType<typeof vi.fn>;
+  const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
   const diseaseCalls = fetchMock.mock.calls.filter((args) =>
     String(args[0]).includes('disease.sh')
   );
@@ -169,9 +169,9 @@ test('time range selector buttons are rendered', async () => {
 });
 
 test('shows error banner when all fetches fail', async () => {
-  global.fetch = vi.fn(() =>
+  globalThis.fetch = vi.fn(() =>
     Promise.resolve({ ok: false, status: 500, statusText: 'Internal Server Error' })
-  ) as unknown as typeof global.fetch;
+  ) as unknown as typeof globalThis.fetch;
 
   await act(async () => {
     render(<App />);
@@ -185,7 +185,7 @@ test('shows error banner when all fetches fail', async () => {
 
 test('shows error banner when a single country fetch fails', async () => {
   let callCount = 0;
-  global.fetch = vi.fn((url: string) => {
+  globalThis.fetch = vi.fn((url: string) => {
     if (url.includes('disease.sh')) {
       callCount++;
       if (callCount === 1) {
@@ -200,7 +200,7 @@ test('shows error banner when a single country fetch fails', async () => {
       ok: true,
       text: () => Promise.resolve(mockStateCsv),
     });
-  }) as unknown as typeof global.fetch;
+  }) as unknown as typeof globalThis.fetch;
 
   await act(async () => {
     render(<App />);
